@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
   title: Swagger Petstore - OpenAPI 3.0
-  description: COA lab1 Вариант 13104
+  description: COA lab1 Вариант 13104 service1
   version: 1.0.11
 servers:
-  - url: https://localhost:9090/api/server1
+  - url: https://localhost:9090/api/v1
 tags:
   - name: worker
     description: Worker management(only one worker every time)
@@ -64,6 +64,30 @@ paths:
           description: Worker with this id not found
         '500':
           description: Server not accessied now
+    put:
+      tags:
+        - worker
+      summary: update worker by id
+      operationId: updateWorkerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Coordinate id to find
+          schema:
+            type: integer
+            format: int64
+            nullable: false
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: Worker with this id not found
+        '500':
+          description: Server not accessied now                
   /company/worker:
     post:
       tags:
@@ -82,23 +106,6 @@ paths:
           description: Worker input invalid
         '500':
           description: Server not accessied now
-    put:
-      tags:
-        - worker
-      summary: update worker by id
-      operationId: updateWorkerById
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Worker"
-      responses:
-        '200':
-          description: Updated successfully
-        '404':
-          description: Worker with this id not found
-        '500':
-          description: Server not accessied now  
   /company/worker/maxSalary:
     get:
       tags:
@@ -252,12 +259,6 @@ components:
     Organization:
       type: object
       properties:
-        id:
-          type: integer
-          nullable: false
-          minimum: 0
-          exclusiveMinimum: true
-          example: 121
         fullName:
           type: string
           nullable: false

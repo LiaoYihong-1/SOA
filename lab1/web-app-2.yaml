@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: COA lab1 Вариант 13104 service2
+  version: 1.0.11
+servers:
+  - url: https://localhost:9090/api/server2
+tags:
+  - name: HR
+    description: HR calls basic services
+paths:
+  /fire/{id}:
+    delete:
+      tags:
+        - HR
+      summary: fire worker by id
+      operationId: fireWorkerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            nullable: false
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+      responses:
+        '404':
+          description: Worker with this id not found
+        '500':
+          description: Server not available
+        '200':
+          description: Exsited such a worker with id. He will be fired.
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                minimum: 0
+                exclusiveMinimum: true
+                example: 21
+          links:
+            deleteWorkerById:
+              operationRef: 'https://localhost:9090/api/server1/web-app-1.yaml#/paths/~1company~1worker~1{id}/delete'
+              parameters:
+                id: '$response.body'
+  /move/{worker-id}/{id-from}/{id-to}:
+    put:
+      tags:
+        - HR
+      summary: fire worker by id
+      operationId: moveWorkerById
+      parameters:
+        - name: worker-id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            nullable: false
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+        - name: id-from # in our variants there is no id for organization. So i added it as properties of organiztion
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            nullable: false
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+        - name: id-to # in our variants there is no id for organization. So i added it as properties of organiztion
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            nullable: false
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+      responses:
+        '404':
+          description: Worker or organization with these id not found
+        '500':
+          description: Server not available
+        '200':
+          description: All input id valid. Worker now works in another organization. 
+          content:
+            application/json:
+              schema:
+                $ref: './web-app-1.yaml#/components/schemas/Worker'
+          links:
+            deleteWorkerById:
+              operationRef: 'https://localhost:9090/api/server1/web-app-1.yaml#/paths/~1company~1worker/put'
+              requestBody: '$response.body'
