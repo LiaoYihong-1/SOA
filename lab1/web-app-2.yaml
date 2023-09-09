@@ -43,7 +43,7 @@ paths:
                 example: 21
           links:
             deleteWorkerById:
-              operationRef: 'https://localhost:9090/api/server1/web-app-1.yaml#/paths/~1company~1worker~1{id}/delete'
+              operationRef: 'https://github.com/LiaoYihong-1/SOA/blob/main/lab1/web-app-1.yaml#/paths/~1company~1worker~1{id}/delete'
               parameters:
                 id: '$response.body'
   /move/{worker-id}/{id-from}/{id-to}:
@@ -93,8 +93,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './web-app-1.yaml#/components/schemas/Worker'
+                $ref: "https://github.com/LiaoYihong-1/SOA/blob/main/lab1/web-app-1.yaml#/components/schemas/Worker"
           links:
             deleteWorkerById:
-              operationRef: 'https://localhost:9090/api/server1/web-app-1.yaml#/paths/~1company~1worker/put'
+              operationRef: 'https://github.com/LiaoYihong-1/SOA/blob/main/lab1/web-app-1.yaml#/paths/~1company~1worker/put'
               requestBody: '$response.body'
