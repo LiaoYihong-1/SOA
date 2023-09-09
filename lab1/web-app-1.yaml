@@ -21,7 +21,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: Coordinate id to find
+          description: Worker id to find
           schema:
             type: integer
             format: int64
