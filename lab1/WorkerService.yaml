@@ -1,10 +1,10 @@
-openapi: 3.0.3
+openapi: 3.0.1
 info:
-  title: Swagger Petstore - OpenAPI 3.0
+  title: Workers service REST endpoints
   description: COA lab1 Вариант 13104
-  version: 1.0.11
+  version: 1.0.0
 servers:
-  - url: https://localhost:9090/api/server1
+  - url: https://localhost:78788/api/v1
 tags:
   - name: worker
     description: Worker management(only one worker every time)
@@ -30,15 +30,15 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        '200':
+        "200":
           description: Returns worker by id
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/Worker'
-        '404':
+                $ref: "#/components/schemas/WorkerFullInfo"
+        "404":
           description: Worker with this id not found
-        '500':
+        "500":
           description: Server not accessied now
     delete:
       tags:
@@ -58,11 +58,11 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        '200':
+        "200":
           description: Delete successfully
-        '404':
+        "404":
           description: Worker with this id not found
-        '500':
+        "500":
           description: Server not accessied now
   /company/worker:
     post:
@@ -72,15 +72,15 @@ paths:
       operationId: createWorker
       requestBody:
         content:
-          application/json:
+          application/xml:
             schema:
-              $ref: "#/components/schemas/WorkerInRequestBody"
+              $ref: "#/components/schemas/CreateWorkerRequest"
       responses:
-        '200':
+        "200":
           description: Created successfully
-        '400':
+        "400":
           description: Worker input invalid
-        '500':
+        "500":
           description: Server not accessied now
     put:
       tags:
@@ -89,16 +89,18 @@ paths:
       operationId: updateWorkerById
       requestBody:
         content:
-          application/json:
+          application/xml:
             schema:
-              $ref: "#/components/schemas/Worker"
+              $ref: "#/components/schemas/WorkerFullInfo"
       responses:
-        '200':
+        "200":
           description: Updated successfully
-        '404':
+        "404":
           description: Worker with this id not found
-        '500':
-          description: Server not accessied now  
+        "405":
+          description: Validation issue!
+        "500":
+          description: Server not accessied now
   /company/worker/maxSalary:
     get:
       tags:
@@ -106,20 +108,20 @@ paths:
       summary: get worker, whose salary is the highest
       operationId: getWorkerWithHighestSalary
       responses:
-        '200':
+        "200":
           description: got worker, whose salary is the highest
           content:
-            application/json:
+            application/xml:
               schema:
-                $ref: '#/components/schemas/Worker'
-        '404':
+                $ref: "#/components/schemas/WorkerFullInfo"
+        "404":
           description: Network invalid
-        '500':
+        "500":
           description: Server not accessied now
-          
+
   /company/workers:
     get:
-      tags: 
+      tags:
         - workers
       summary: Returns all workers in sort
       operationId: getWorkers
@@ -128,7 +130,7 @@ paths:
           in: query
           required: false
           description: sort should be done by any combination of all fields in object. It means that in request should have an array where we save all fields, by which sorted result.
-          explode: true # create individual field in request for every field
+          explode: true
           schema:
             type: array
             items:
@@ -160,9 +162,10 @@ paths:
           description: Array of fields used for filtering.
           schema:
             type: array
+            example: id[eq]=2
             items:
               type: string
-              pattern: '^((id|creationDate|coordinates\.x|coordinates\.y|salary|startDate|endDate|position|view|organization\.annualTurnover)\-(eq|ne|gt|lt|lte|gte)\-.+)|((organization.name|name)\-eq\-.+)$'
+              pattern: '^(id|creationDate|coordinates\.x|coordinates\.y|salary|startDate|endDate|position|view|organization\.annualTurnover|organization.\fullName)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
         - name: pageSize
           in: query
           required: false
@@ -175,36 +178,33 @@ paths:
             exclusiveMinimum: false
             example: 10
       responses:
-        '200':
+        "200":
           description: Returned all workers by requirements
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/ArrayWorkers'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArrayWorkers'
-        '500':
+                $ref: "#/components/schemas/SortedWorkersResponse"
+        "500":
           description: Server not accessied now
-        '400':
+        "400":
           description: invalid input fileter, sortElements, pagesize or sort method
   /company/workers/getAmountByEndDate:
     get:
       tags:
         - workers
-      summary: Returns numbers of all workers, whose end date equals or later than given(by our choices)
+      summary: Returns number of all workers, whose end date equals or later than given(by our choices)
       operationId: getWorkersByEndDate
       parameters:
-        - name: 'endDate'
+        - name: "endDate"
           in: query
           description: end date
           required: true
           schema:
             type: string
             format: date
-            example: '2022-12-31'
+            example: "2022-12-31"
             nullable: false
-        - name: 'condition'
+        - name: "condition"
           in: query
           description: greater or equals
           required: true
@@ -215,25 +215,25 @@ paths:
               - equals
             nullable: false
       responses:
-        '200':
-          description: successfully get the numbers of workers, who satisfies the condition
+        "200":
+          description: successfully get the number of workers, who satisfies the condition
           content:
-            application/text:
+            application/xml:
               schema:
-                type: integer
-                format: int32
-                example: 100
-                nullable: false
-        '400':
+                type: object
+                properties:
+                  number:
+                    type: integer
+                    example: 256
+                xml:
+                  name: numberOfWorkers
+        "400":
           description: wrong date format or wrong condition chosen
-        '500':
+        "500":
           description: server not available
-        
-      
-# all objects(like java classes)
+
 components:
   schemas:
-    # My own
     Coordinates:
       type: object
       properties:
@@ -262,16 +262,16 @@ components:
           type: string
           nullable: false
           maxLength: 758
-          example: 'Google'
+          example: "Google"
         annualTurnover:
           type: integer
           nullable: false
           minimum: 0
           exclusiveMinimum: true
           example: 654000000
-    Worker:
+    WorkerFullInfo:
       xml:
-        name: 'woker'
+        name: "WorkerFullInfo"
       type: object
       properties:
         id:
@@ -285,15 +285,15 @@ components:
           type: string
           nullable: false
           minLength: 1
-          example: 'liao'
+          example: "liao"
         coordinates:
-          $ref: '#/components/schemas/Coordinates'
+          $ref: "#/components/schemas/Coordinates"
         creationDate:
           type: string
-          format: date-time 
+          format: date-time
           nullable: false
           description: Be generated automatically
-          example: '2023-09-07T00:00:10Z'
+          example: "2023-09-07T00:00:10Z"
         salary:
           type: number
           format: float
@@ -305,12 +305,12 @@ components:
           type: string
           format: date
           nullable: false
-          example: '2022-09-19'
+          example: "2022-09-19"
         endDate:
           type: string
           format: date
           nullable: false
-          example: '2022-12-31'
+          example: "2022-12-31"
         position:
           type: string
           enum:
@@ -320,19 +320,19 @@ components:
             - DEVELOPER
             - COOK
           nullable: false
-          example: 'MANAGER'
+          example: "MANAGER"
         organization:
-          $ref: '#/components/schemas/Organization'
-    WorkerInRequestBody:
+          $ref: "#/components/schemas/Organization"
+    CreateWorkerRequest:
       type: object
       properties:
         name:
           type: string
           nullable: false
           minLength: 1
-          example: 'liao'
+          example: "liao"
         coordinates:
-          $ref: '#/components/schemas/Coordinates'
+          $ref: "#/components/schemas/Coordinates"
         salary:
           type: number
           format: float
@@ -344,12 +344,12 @@ components:
           type: string
           format: date
           nullable: false
-          example: '2022-09-19'
+          example: "2022-09-19"
         endDate:
           type: string
           format: date
           nullable: false
-          example: '2022-12-31'
+          example: "2022-12-31"
         position:
           type: string
           enum:
@@ -359,14 +359,45 @@ components:
             - DEVELOPER
             - COOK
           nullable: false
-          example: 'MANAGER'
+          example: "MANAGER"
         organization:
-          $ref: '#/components/schemas/Organization'
-    ArrayWorkers:
-      xml:
-        name: 'workers'
-        wrapped : true
-      type: array
-      items:
-        $ref: '#/components/schemas/Worker'
-        
+          $ref: "#/components/schemas/Organization"
+    SortedWorkersResponse:
+      type: object
+      properties:
+        pagenumber:
+          type: integer
+          description: Номер текущей страницы
+          format: int32
+        numberOfElements:
+          type: integer
+          description: Количество элементов на текущей странице
+          format: int32
+        first:
+          type: boolean
+          description: Является ли данная страница первой
+        last:
+          type: boolean
+          description: Является ли данная страница последней
+        hasNext:
+          type: boolean
+          description: Имеется ли следующая страница
+        hasPrevious:
+          type: boolean
+          description: Имеется ли предыдущая страница
+        totalPages:
+          type: integer
+          description: Количество страниц
+          format: int32
+        totalElements:
+          type: integer
+          description: Общее количество элементов
+          format: int64
+        hasContent:
+          type: boolean
+          description: Имеется ли содержимое
+        content:
+          type: array
+          description: Содержимое в виде списка элементов
+          items:
+            $ref: "#/components/schemas/WorkerFullInfo"
