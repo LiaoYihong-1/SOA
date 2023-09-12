@@ -27,12 +27,52 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        "404":
-          description: Worker with this id not found
+        "400":
+          description: Invalid worker or org id value
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid worker or org id value
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
-          description: Server not available
-        "200":
-          description: Exsited such a worker with id. He will be fired.
+          description: Internal server error
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, message and time in case of error
+          content:
+            application/xml:
+              schema:
+                $ref: './WorkerService.yaml#/components/schemas/Error'
   /move/{worker-id}/{id-from}/{id-to}:
     put:
       tags:
@@ -80,8 +120,10 @@ paths:
         "400":
           description: Invalid worker or org id value
           content:
-            application/json:
+            application/xml:
               schema:
+                xml:
+                  name: Error
                 type: object
                 properties:
                   code:
@@ -98,8 +140,10 @@ paths:
         "500":
           description: Internal server error
           content:
-            application/json:
+            application/xml:
               schema:
+                xml:
+                  name: Error
                 type: object
                 properties:
                   code:
@@ -116,7 +160,6 @@ paths:
         default:
           description: Returns error code, message and time in case of error
           content:
-            application/json:
+            application/xml:
               schema:
-                $ref: '#/components/schemas/Error'
-  
+                $ref: './WorkerService.yaml#/components/schemas/Error'
