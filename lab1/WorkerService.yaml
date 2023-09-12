@@ -515,11 +515,53 @@ paths:
                     type: integer
                     example: 256
                 xml:
-                  name: numberOfWorkers
+                  name: NumberOfWorkers
         "400":
-          description: wrong date format or wrong condition chosen
+          description: workers not found
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    example: workers not found
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
-          description: server not available
+          description: Server not accessied now
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
 
 components:
   schemas:
