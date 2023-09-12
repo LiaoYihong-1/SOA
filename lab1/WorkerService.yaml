@@ -37,9 +37,51 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkerFullInfo"
         "404":
-          description: Worker with this id not found
+          description: Invalid worker not found
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 404
+                  message:
+                    type: string
+                    example: Invalid worker not found
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
           description: Server not accessied now
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
     delete:
       tags:
         - worker
@@ -58,12 +100,72 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        "200":
-          description: Delete successfully
+        "204":
+          description: The worker was successfully deleted
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: The worker was successfully deleted
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "404":
-          description: Worker with this id not found
+          description: Worker not found
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 404
+                  message:
+                    type: string
+                    example: Worker not found
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
           description: Server not accessied now
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
   /company/worker:
     post:
       tags:
@@ -78,10 +180,56 @@ paths:
       responses:
         "200":
           description: Created successfully
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/WorkerFullInfo"
         "400":
-          description: Worker input invalid
+          description: input invalid
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    example: invalid input
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
           description: Server not accessied now
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
     put:
       tags:
         - worker
@@ -94,13 +242,57 @@ paths:
               $ref: "#/components/schemas/WorkerFullInfo"
       responses:
         "200":
-          description: Updated successfully
+          description: updated worker
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/WorkerFullInfo"
         "404":
-          description: Worker with this id not found
-        "405":
-          description: Validation issue!
+          description: worker not found
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 404
+                  message:
+                    type: string
+                    example: worker not found
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
           description: Server not accessied now
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
   /company/worker/maxSalary:
     get:
       tags:
@@ -109,15 +301,57 @@ paths:
       operationId: getWorkerWithHighestSalary
       responses:
         "200":
-          description: got worker, whose salary is the highest
+          description: worker w highest salary 
           content:
             application/xml:
               schema:
                 $ref: "#/components/schemas/WorkerFullInfo"
-        "404":
-          description: Network invalid
+        "400":
+          description: worker not found
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    example: worker not found
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
           description: Server not accessied now
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
 
   /company/workers:
     get:
@@ -197,10 +431,52 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/SortedWorkersResponse"
+        "400":
+          description: invalid input
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    example: invalid input
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "500":
           description: Server not accessied now
-        "400":
-          description: invalid input fileter, sortElements, pagesize or sort method
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, error message and time
+          content:
+              application/xml:
+                schema:
+                  $ref: "#/components/schemas/Error"
   /company/workers/getAmountByEndDate:
     get:
       tags:
@@ -299,14 +575,14 @@ components:
           nullable: false
           minLength: 1
           example: "liao"
-        coordinates:
+        Coordinates:
           $ref: "#/components/schemas/Coordinates"
         creationDate:
           type: string
           format: date-time
           nullable: false
           description: Be generated automatically
-          example: "2023-09-07T00:00:10Z"
+          example: "2023-09-10T00:00:00Z"
         salary:
           type: number
           format: float
@@ -334,7 +610,7 @@ components:
             - COOK
           nullable: false
           example: "MANAGER"
-        organization:
+        Organization:
           $ref: "#/components/schemas/Organization"
     CreateWorkerRequest:
       type: object
@@ -412,8 +688,28 @@ components:
         content:
           type: array
           xml:
-            name: Wokers
+            name: content
             wrapped: true
           description: Содержимое в виде списка элементов
           items:
             $ref: "#/components/schemas/WorkerFullInfo"
+    Error:
+      xml:
+        name: Error
+      type: object
+      required:
+        - httpCode
+        - message
+        - time
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 404
+        message:
+          type: string
+          example: Not Found
+        time:
+          type: string
+          format: date-time
+          example: 2023-10-13T00:00:00Z

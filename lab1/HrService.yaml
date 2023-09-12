@@ -71,13 +71,52 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        "404":
-          description: Worker or organization with these id not found
-        "500":
-          description: Server not available
         "200":
           description: All input id valid. Worker now works in another organization.
           content:
             application/xml:
               schema:
                 $ref: "./WorkerService.yaml#/components/schemas/WorkerFullInfo"
+        "400":
+          description: Invalid worker or org id value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid worker or org id value
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
+        default:
+          description: Returns error code, message and time in case of error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
