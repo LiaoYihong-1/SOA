@@ -398,6 +398,9 @@ components:
           description: Имеется ли содержимое
         content:
           type: array
+          xml:
+            name: Wokers
+            wrapped : true
           description: Содержимое в виде списка элементов
           items:
             $ref: "#/components/schemas/WorkerFullInfo"
