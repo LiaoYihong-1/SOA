@@ -27,6 +27,26 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
+        "204":
+          description: The worker was successfully fired
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: The worker was successfully fired
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2023-10-13T00:00:00Z
         "400":
           description: Invalid worker or org id value
           content:
@@ -72,7 +92,7 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: './WorkerService.yaml#/components/schemas/Error'
+                $ref: "./WorkerService.yaml#/components/schemas/Error"
   /move/{worker-id}/{id-from}/{id-to}:
     put:
       tags:
@@ -162,4 +182,4 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: './WorkerService.yaml#/components/schemas/Error'
+                $ref: "./WorkerService.yaml#/components/schemas/Error"
