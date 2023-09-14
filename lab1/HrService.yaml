@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Hr service REST endpoints
-  description: COA lab1 Вариант 13104 service2
+  description: COA lab1 Р’Р°СЂРёР°РЅС‚ 13104 service2
   version: 1.0.0
 servers:
   - url: https://localhost:78778/api/v1
@@ -19,6 +19,7 @@ paths:
       parameters:
         - name: id
           in: path
+          description: worker id to fire
           required: true
           schema:
             type: integer
@@ -58,11 +59,13 @@ paths:
     put:
       tags:
         - HR
-      summary: fire worker by id
+      summary: move worker by id
+      description: move worker by id
       operationId: moveWorkerById
       parameters:
         - name: worker-id
           in: path
+          description: worker id to move
           required: true
           schema:
             type: integer
@@ -73,6 +76,7 @@ paths:
             example: 1
         - name: id-from # in our variants there is no id for organization. So i added it as properties of organiztion
           in: path
+          description: old organiztion id
           required: true
           schema:
             type: integer
@@ -83,6 +87,7 @@ paths:
             example: 1
         - name: id-to # in our variants there is no id for organization. So i added it as properties of organiztion
           in: path
+          description: new organiztion id
           required: true
           schema:
             type: integer
