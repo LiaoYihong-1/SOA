@@ -14,6 +14,7 @@ paths:
       tags:
         - HR
       summary: fire worker by id
+      description: fire worker by id
       operationId: fireWorkerById
       parameters:
         - name: id
@@ -28,7 +29,7 @@ paths:
             example: 1
       responses:
         "204":
-          description: The worker was successfully fired
+          description: The worker was fired successfully
           content:
             application/xml:
               schema:
@@ -42,53 +43,13 @@ paths:
                     example: 204
                   message:
                     type: string
-                    example: The worker was successfully fired
-                  time:
-                    type: string
-                    format: date-time
-                    example: 2023-10-13T00:00:00Z
+                    example: The worker was fired successfully
         "400":
-          description: Invalid worker or org id value
-          content:
-            application/xml:
-              schema:
-                xml:
-                  name: Error
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 400
-                  message:
-                    type: string
-                    example: Invalid worker or org id value
-                  time:
-                    type: string
-                    format: date-time
-                    example: 2023-10-13T00:00:00Z
+          $ref: "./WorkerService.yaml#/components/responses/InvalidRequest"
         "500":
-          description: Internal server error
-          content:
-            application/xml:
-              schema:
-                xml:
-                  name: Error
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 500
-                  message:
-                    type: string
-                    example: Internal server error
-                  time:
-                    type: string
-                    format: date-time
-                    example: 2023-10-13T00:00:00Z
+          $ref: "./WorkerService.yaml#/components/responses/InternalServerError"
         default:
-          description: Returns error code, message and time in case of error
+          description: Unexpected error
           content:
             application/xml:
               schema:
@@ -138,47 +99,11 @@ paths:
               schema:
                 $ref: "./WorkerService.yaml#/components/schemas/WorkerFullInfo"
         "400":
-          description: Invalid worker or org id value
-          content:
-            application/xml:
-              schema:
-                xml:
-                  name: Error
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 400
-                  message:
-                    type: string
-                    example: Invalid worker or org id value
-                  time:
-                    type: string
-                    format: date-time
-                    example: 2023-10-13T00:00:00Z
+          $ref: "./WorkerService.yaml#/components/responses/InvalidRequest"
         "500":
-          description: Internal server error
-          content:
-            application/xml:
-              schema:
-                xml:
-                  name: Error
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 500
-                  message:
-                    type: string
-                    example: Internal server error
-                  time:
-                    type: string
-                    format: date-time
-                    example: 2023-10-13T00:00:00Z
+          $ref: "./WorkerService.yaml#/components/responses/InternalServerError"
         default:
-          description: Returns error code, message and time in case of error
+          description: Unexpected error
           content:
             application/xml:
               schema:
