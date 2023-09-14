@@ -8,6 +8,124 @@ servers:
 tags:
   - name: Worker
 paths:
+  /company/workers:
+    get:
+      tags:
+        - Worker
+      summary: returns workers in sort
+      description: returns workers in sort
+      operationId: getWorkers
+      parameters:
+        - name: sortElements
+          in: query
+          required: false
+          description: sort should be done by any combination of all fields in object. It means that in request should have an array where we save all fields, by which sorted result.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              default: id
+              enum:
+                - id
+                - name
+                - creationDate
+                - coordinates.x
+                - coordinates.y
+                - salary
+                - creationDate
+                - startDate
+                - endDate
+                - position
+                - organization.name
+                - organization.annualTurnover
+        - name: isUpper
+          in: query
+          required: false
+          description: The order of result.
+          schema:
+            type: boolean
+            default: true
+        - name: filter
+          in: query
+          required: false
+          description: Array of fields used for filtering.
+          schema:
+            type: array
+            example: id[eq]=2
+            items:
+              type: string
+              pattern: '^(id|creationDate|coordinates\.x|coordinates\.y|salary|startDate|endDate|position|view|organization\.annualTurnover|organization.\fullName)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
+        - name: pageSize
+          in: query
+          required: false
+          description: page size for pagination
+          schema:
+            type: integer
+            format: int32
+            nullable: false
+            minimum: 1
+            default: 1
+            exclusiveMinimum: false
+            example: 1
+        - name: page
+          in: query
+          required: false
+          description: page number to be paginated
+          schema:
+            type: integer
+            format: int32
+            nullable: false
+            default: 0
+            minimum: 0
+            exclusiveMinimum: false
+            example: 0
+      responses:
+        "200":
+          description: Returned all workers by requirements
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/SortedWorkersResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        default:
+          description: Unexpected error
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Worker
+      summary: create a new worker in company
+      description: create a new worker in company
+      operationId: createWorker
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/CreateWorkerRequest"
+      responses:
+        "200":
+          description: Returns the worker that was just added
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/WorkerFullInfo"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        default:
+          description: Unexpected error
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
   /company/workers/{id}:
     get:
       tags:
@@ -133,124 +251,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Error"
-  /company/workers:
-    get:
-      tags:
-        - Worker
-      summary: returns workers in sort
-      description: returns workers in sort
-      operationId: getWorkers
-      parameters:
-        - name: sortElements
-          in: query
-          required: false
-          description: sort should be done by any combination of all fields in object. It means that in request should have an array where we save all fields, by which sorted result.
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-              default: id
-              enum:
-                - id
-                - name
-                - creationDate
-                - coordinates.x
-                - coordinates.y
-                - salary
-                - creationDate
-                - startDate
-                - endDate
-                - position
-                - organization.name
-                - organization.annualTurnover
-        - name: isUpper
-          in: query
-          required: false
-          description: The order of result.
-          schema:
-            type: boolean
-            default: true
-        - name: filter
-          in: query
-          required: false
-          description: Array of fields used for filtering.
-          schema:
-            type: array
-            example: id[eq]=2
-            items:
-              type: string
-              pattern: '^(id|creationDate|coordinates\.x|coordinates\.y|salary|startDate|endDate|position|view|organization\.annualTurnover|organization.\fullName)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
-        - name: pageSize
-          in: query
-          required: false
-          description: page size for pagination
-          schema:
-            type: integer
-            format: int32
-            nullable: false
-            minimum: 1
-            default: 1
-            exclusiveMinimum: false
-            example: 1
-        - name: page
-          in: query
-          required: false
-          description: page number to be paginated
-          schema:
-            type: integer
-            format: int32
-            nullable: false
-            default: 0
-            minimum: 0
-            exclusiveMinimum: false
-            example: 0
-      responses:
-        "200":
-          description: Returned all workers by requirements
-          content:
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/SortedWorkersResponse"
-        "400":
-          $ref: "#/components/responses/InvalidRequest"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Unexpected error
-          content:
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/Error"
-    post:
-      tags:
-        - Worker
-      summary: create a new worker in company
-      description: create a new worker in company
-      operationId: createWorker
-      requestBody:
-        required: true
-        content:
-          application/xml:
-            schema:
-              $ref: "#/components/schemas/CreateWorkerRequest"
-      responses:
-        "200":
-          description: Returns the worker that was just added
-          content:
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/WorkerFullInfo"
-        "400":
-          $ref: "#/components/responses/InvalidRequest"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Unexpected error
-          content:
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/Error"
+
   /company/workers/maxSalary:
     get:
       tags:
