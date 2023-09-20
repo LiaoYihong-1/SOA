@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name = "Worker")
 public class Worker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +25,8 @@ public class Worker {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride( name = "x", column = @Column(name = "coordinates_x")),
-            @AttributeOverride( name = "y", column = @Column(name = "coordinates_y")),
+            @AttributeOverride(name = "x", column = @Column(name = "coordinates_x")),
+            @AttributeOverride(name = "y", column = @Column(name = "coordinates_y")),
     })
     private Coordinate coordinate;
 

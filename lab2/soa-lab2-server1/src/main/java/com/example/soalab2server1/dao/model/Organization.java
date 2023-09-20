@@ -25,5 +25,6 @@ public class Organization {
     private Long annualTurnover;
 
     @OneToMany(mappedBy = "organization")
+    @JsonIgnore
     private List<Worker> workers;
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.awt.desktop.ScreenSleepEvent;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 
@@ -31,7 +32,6 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> getById(Integer id) {
         Optional<Worker> optionalWorker = workerRepository.findById(id);
-
         if (optionalWorker.isPresent()) {
             return ResponseEntity.ok(optionalWorker.get());
         } else {
