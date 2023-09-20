@@ -25,7 +25,7 @@ public class WorkerController {
         return workerService.getById(id);
     }
 
-    @PostMapping("/company/workers/{id}")
+    @DeleteMapping("/company/workers/{id}")
     public ResponseEntity<?> deleteWorker(@PathVariable Integer id){
         return workerService.delete(id);
     }
@@ -54,4 +54,5 @@ public class WorkerController {
                                                       @RequestParam(value = "page") Integer pageNum){
         return workerService.getList(sort,filters,isUpper,pageSize,pageNum);
     }
+    
 }
