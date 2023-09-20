@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Hr service REST endpoints
-  description: COA lab1 Вариант 13104 service2
+  description: COA lab1 Р’Р°СЂРёР°РЅС‚ 13104 service2
   version: 1.0.0
 servers:
   - url: https://localhost:78778/api/v1
@@ -14,10 +14,12 @@ paths:
       tags:
         - HR
       summary: fire worker by id
+      description: fire worker by id
       operationId: fireWorkerById
       parameters:
         - name: id
           in: path
+          description: worker id to fire
           required: true
           schema:
             type: integer
@@ -27,21 +29,43 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        "404":
-          description: Worker with this id not found
+        "204":
+          description: The worker was fired successfully
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: Error
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: The worker was fired successfully
+        "400":
+          $ref: "./WorkerService.yaml#/components/responses/InvalidRequest"
         "500":
-          description: Server not available
-        "200":
-          description: Exsited such a worker with id. He will be fired.
+          $ref: "./WorkerService.yaml#/components/responses/InternalServerError"
+        default:
+          description: Unexpected error
+          content:
+            application/xml:
+              schema:
+                $ref: "./WorkerService.yaml#/components/schemas/Error"
   /move/{worker-id}/{id-from}/{id-to}:
     put:
       tags:
         - HR
-      summary: fire worker by id
+      summary: move worker by id
+      description: move worker by id
       operationId: moveWorkerById
       parameters:
         - name: worker-id
           in: path
+          description: worker id to move
           required: true
           schema:
             type: integer
@@ -52,6 +76,7 @@ paths:
             example: 1
         - name: id-from # in our variants there is no id for organization. So i added it as properties of organiztion
           in: path
+          description: old organiztion id
           required: true
           schema:
             type: integer
@@ -62,6 +87,7 @@ paths:
             example: 1
         - name: id-to # in our variants there is no id for organization. So i added it as properties of organiztion
           in: path
+          description: new organiztion id
           required: true
           schema:
             type: integer
@@ -71,13 +97,19 @@ paths:
             exclusiveMinimum: true
             example: 1
       responses:
-        "404":
-          description: Worker or organization with these id not found
-        "500":
-          description: Server not available
         "200":
           description: All input id valid. Worker now works in another organization.
           content:
             application/xml:
               schema:
                 $ref: "./WorkerService.yaml#/components/schemas/WorkerFullInfo"
+        "400":
+          $ref: "./WorkerService.yaml#/components/responses/InvalidRequest"
+        "500":
+          $ref: "./WorkerService.yaml#/components/responses/InternalServerError"
+        default:
+          description: Unexpected error
+          content:
+            application/xml:
+              schema:
+                $ref: "./WorkerService.yaml#/components/schemas/Error"
