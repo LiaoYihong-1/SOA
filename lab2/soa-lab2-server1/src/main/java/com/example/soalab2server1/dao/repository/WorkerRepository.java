@@ -11,6 +11,4 @@ import java.util.Optional;
 @Repository
 public interface WorkerRepository extends JpaRepository<Worker,Integer>, JpaSpecificationExecutor<Worker> {
 
-    void deleteWorkerById(Integer id);
-
 }

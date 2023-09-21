@@ -99,7 +99,7 @@ public class WorkerService implements ServiceOperation<Worker> {
         Optional<Worker> optionalWorker = workerRepository.findById(id);
 
         if (optionalWorker.isPresent()) {
-            workerRepository.deleteWorkerById(id);
+            workerRepository.delete(optionalWorker.get());
             return ResponseEntity.ok().body("Deleted");
         } else {
             Error e = new Error();
