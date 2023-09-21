@@ -197,6 +197,10 @@ public class WorkerService implements ServiceOperation<Worker> {
                         }
                         switch(conditionMatcher.group(1)){
                             case "eq":
+                                /**
+                                 * coordinateJoin only for @Embedded(here is like coordinate.x) object
+                                 * root only for not @Embedded object
+                                 */
                                 if("id".equals(property)) {
                                     predicate = cb.and(predicate, cb.equal(root.get(property), Integer.valueOf(value)));
                                 }else if("x".equals(property)){
@@ -241,7 +245,6 @@ public class WorkerService implements ServiceOperation<Worker> {
                     }
                 }
             }
-            //    predicate = cb.and(predicate, cb.equal(root.get("property1"), filterProperty1));
             return predicate;
         };
         return spec;

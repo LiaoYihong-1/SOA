@@ -23,6 +23,9 @@ public class Organization {
     @Column(name = "annual_turnover", nullable = false)
     private Long annualTurnover;
 
+    /**
+     * @JsonIgnore to solve problem of infinite cycle in response
+     */
     @OneToMany(mappedBy = "organization")
     @JsonIgnore
     private List<Worker> workers;

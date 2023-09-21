@@ -46,6 +46,9 @@ public class Worker {
     @Enumerated(EnumType.STRING)
     private Position position;
 
+    /**
+     * Here use @JoinColumn so don't need to map organization_id again like other properties!
+     */
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
