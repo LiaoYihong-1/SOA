@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "5d2f4b5e-bcaa-40d4-af5f-23072fe87d25",
+		"name": "Soa",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25926653",
+		"_collection_link": "https://orange-satellite-872242.postman.co/workspace/My-Workspace~7bafab7a-cc26-49cc-83d5-8db3eb2c3247/collection/25926653-5d2f4b5e-bcaa-40d4-af5f-23072fe87d25?action=share&source=collection_link&creator=25926653"
+	},
+	"item": [
+		{
+			"name": "getbyid",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/company/workers/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteWorker",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/company/workers/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createWorker",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"TONY\",\r\n    \"coordinate\": {\r\n        \"x\": -23,\r\n        \"y\": 23.0\r\n    },\r\n    \"creationDate\": \"2022-09-21T14:12:42.614+03:00\",\r\n    \"salary\": 333333.0,\r\n    \"startDate\": \"2021-06-21T03:10:01\",\r\n    \"endDate\": \"2024-09-21\",\r\n    \"position\": \"MANAGER\",\r\n    \"organization\": {\r\n        \"id\": 1,\r\n        \"fullName\": \"Google\",\r\n        \"annualTurnover\": 12324123\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/company/workers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sortAndFilter",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/company/workers?sortElement=salary&isUpper=false&filters=coordinate.y(gt)1&pageSize=5&page=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers"
+					],
+					"query": [
+						{
+							"key": "sortElement",
+							"value": "salary"
+						},
+						{
+							"key": "isUpper",
+							"value": "false"
+						},
+						{
+							"key": "filters",
+							"value": "coordinate.y(gt)1"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "maxSalary",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/company/workers/salary/max",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers",
+						"salary",
+						"max"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "count",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/company/workers/count?enddate=2000-09-21&condition=greater",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers",
+						"count"
+					],
+					"query": [
+						{
+							"key": "enddate",
+							"value": "2000-09-21"
+						},
+						{
+							"key": "condition",
+							"value": "greater"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"A\",\r\n    \"coordinate\": {\r\n        \"x\": 10000,\r\n        \"y\": 2100.0\r\n    },\r\n    \"creationDate\": \"2022-09-21T14:12:42.614+03:00\",\r\n    \"salary\": 21343.0,\r\n    \"startDate\": \"2021-06-21T03:10:01\",\r\n    \"endDate\": \"2024-09-21\",\r\n    \"position\": \"MANAGER\",\r\n    \"organization\": {\r\n        \"id\": 1,\r\n        \"fullName\": \"Google\",\r\n        \"annualTurnover\": 12324123\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/company/workers/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"company",
+						"workers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/workers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"workers"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
