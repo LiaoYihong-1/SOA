@@ -173,10 +173,9 @@ public class WorkerService implements ServiceOperation<Worker> {
             Predicate predicate = cb.conjunction();
             for(String filter: filters) {
                 if(filter != null && !filter.isEmpty()) {
-                    String conditionRegex = "\\[(.*?)\\]";
-                    String valueRegex = "\\](.*?)$";
-                    String propertyRegex = "(.*?)\\[";
-
+                    String conditionRegex = "\\((.*?)\\)";
+                    String valueRegex = "\\)(.*?)$";
+                    String propertyRegex = "(.*?)\\(";
                     Pattern conditionPattern = Pattern.compile(conditionRegex);
                     Matcher conditionMatcher = conditionPattern.matcher(filter);
 
@@ -189,6 +188,7 @@ public class WorkerService implements ServiceOperation<Worker> {
                     if(conditionMatcher.find() && valueMatcher.find() && propertyMatcher.find()){
                         String property = propertyMatcher.group(1);
                         String value = valueMatcher.group(1);
+                        System.out.println(property);
                         if("coordinate.x".equals(property)){
                             property = "x";
                         }
@@ -198,41 +198,41 @@ public class WorkerService implements ServiceOperation<Worker> {
                         switch(conditionMatcher.group(1)){
                             case "eq":
                                 if("id".equals(property)) {
-                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Integer.valueOf(value)));
+                                    predicate = cb.and(predicate, cb.equal(root.get(property), Integer.valueOf(value)));
                                 }else if("x".equals(property)){
                                     predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Long.valueOf(value)));
                                 }else if("y".equals(property)){
                                     predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Double.valueOf(value)));
                                 }else if("salary".equals(property)){
-                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Float.valueOf(value)));
+                                    predicate = cb.and(predicate, cb.equal(root.get(property), Float.valueOf(value)));
                                 }else{
-                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), value));
+                                    predicate = cb.and(predicate, cb.equal(root.get(property), value));
                                 }
                                 break;
                             case "gt":
                                 if("id".equals(property)) {
-                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Integer.valueOf(value)));
+                                    predicate = cb.and(predicate, cb.greaterThan(root.get(property), Integer.valueOf(value)));
                                 }else if("x".equals(property)){
                                     predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Long.valueOf(value)));
                                 }else if("y".equals(property)){
                                     predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Double.valueOf(value)));
                                 }else if("salary".equals(property)){
-                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Float.valueOf(value)));
+                                    predicate = cb.and(predicate, cb.greaterThan(root.get(property), Float.valueOf(value)));
                                 }else{
-                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), value));
+                                    predicate = cb.and(predicate, cb.greaterThan(root.get(property), value));
                                 }
                                 break;
                             case "lt":
                                 if("id".equals(property)) {
-                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Integer.valueOf(value)));
+                                    predicate = cb.and(predicate, cb.lessThan(root.get(property), Integer.valueOf(value)));
                                 }else if("x".equals(property)){
                                     predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Long.valueOf(value)));
                                 }else if("y".equals(property)){
                                     predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Double.valueOf(value)));
                                 }else if("salary".equals(property)){
-                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Float.valueOf(value)));
+                                    predicate = cb.and(predicate, cb.lessThan(root.get(property), Float.valueOf(value)));
                                 }else{
-                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), value));
+                                    predicate = cb.and(predicate, cb.lessThan(root.get(property), value));
                                 }
                                 break;
                             default:

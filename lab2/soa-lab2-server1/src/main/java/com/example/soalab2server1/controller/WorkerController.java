@@ -2,9 +2,7 @@ package com.example.soalab2server1.controller;
 
 import com.example.soalab2server1.dao.model.Worker;
 import com.example.soalab2server1.service.impl.WorkerService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
