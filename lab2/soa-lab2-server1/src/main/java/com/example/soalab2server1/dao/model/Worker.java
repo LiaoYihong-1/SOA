@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 public class Worker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
+    @Column(name = "id")
     private Integer id;
 
     @Column(name = "name", nullable = false)
@@ -42,12 +42,9 @@ public class Worker {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "position", nullable = false)
+    @Column(name = "position", nullable = false,columnDefinition = "com.example.soalab2server1.dao.model.Position")
     @Enumerated(EnumType.STRING)
     private Position position;
-
-    @Column(name = "organization_id",nullable = false,insertable = false,updatable = false)
-    private Integer organizationId;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")

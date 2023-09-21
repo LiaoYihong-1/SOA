@@ -15,7 +15,6 @@ import java.util.List;
 public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Integer id;
 
     @Column(name = "full_name", nullable = false)

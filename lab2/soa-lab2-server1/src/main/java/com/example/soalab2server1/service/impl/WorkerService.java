@@ -1,6 +1,7 @@
 package com.example.soalab2server1.service.impl;
 
 import com.example.soalab2server1.dao.model.Coordinate;
+import com.example.soalab2server1.dao.model.Position;
 import com.example.soalab2server1.dao.model.Worker;
 import com.example.soalab2server1.dao.repository.WorkerRepository;
 import com.example.soalab2server1.service.operation.ServiceOperation;
@@ -10,9 +11,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.desktop.ScreenSleepEvent;
 import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 
 import javax.persistence.criteria.Join;
@@ -124,6 +126,7 @@ public class WorkerService implements ServiceOperation<Worker> {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> post(Worker worker) {
         workerRepository.save(worker);
         return ResponseEntity.ok(worker);
@@ -151,16 +154,25 @@ public class WorkerService implements ServiceOperation<Worker> {
             }
         }
         sort1 = Sort.by(orders);
-        //filter
-        List<Worker> workersAfterFilter = workerRepository.findAll(sort1);
         //page
-        Page<Worker> pages = new PageImpl<>(workersAfterFilter, PageRequest.of(pageNum, pageSize), workersAfterFilter.size());
+        Pageable pageable = PageRequest.of(pageNum, pageSize, sort1);
+        //filter
+        Specification<Worker> spec;
+        try {
+            spec = filterCreate(filters);
+        }catch (InvalidParameterException e){
+            return ResponseEntity.status(400).body(new Error("Invalid input", 400));
+        }
+        Page<Worker> pages = workerRepository.findAll(spec,pageable);
         return ResponseEntity.ok(pages);
     }
-    public List<Worker> filter(List<Worker> workers, List<String> filters){
-        for(int i = 0 ; i < workers.size(); i++){
-            for (String filter : filters) {
-                if (filter != null && !filter.isEmpty()) {
+
+    public Specification<Worker> filterCreate(List<String> filters) throws InvalidParameterException{
+        Specification<Worker> spec = (root, query, cb) -> {
+            Join<Worker, Coordinate> coordinateJoin = root.join("coordinate", JoinType.INNER);
+            Predicate predicate = cb.conjunction();
+            for(String filter: filters) {
+                if(filter != null && !filter.isEmpty()) {
                     String conditionRegex = "\\[(.*?)\\]";
                     String valueRegex = "\\](.*?)$";
                     String propertyRegex = "(.*?)\\[";
@@ -174,27 +186,65 @@ public class WorkerService implements ServiceOperation<Worker> {
                     Pattern propertyPattern = Pattern.compile(propertyRegex);
                     Matcher propertyMatcher = propertyPattern.matcher(filter);
 
-                    if (propertyMatcher.find() && conditionMatcher.find() && valueMatcher.find()) {
-                        String property = propertyMatcher.group(1).trim();
-                        String value = valueMatcher.group(1).trim();
-                        String condition = conditionMatcher.group(1).trim();
-                        switch (condition){
-
+                    if(conditionMatcher.find() && valueMatcher.find() && propertyMatcher.find()){
+                        String property = propertyMatcher.group(1);
+                        String value = valueMatcher.group(1);
+                        if("coordinate.x".equals(property)){
+                            property = "x";
+                        }
+                        if("coordinate.y".equals(property)){
+                            property = "y";
+                        }
+                        switch(conditionMatcher.group(1)){
                             case "eq":
-                                if(property.equals("id"))
+                                if("id".equals(property)) {
+                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Integer.valueOf(value)));
+                                }else if("x".equals(property)){
+                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Long.valueOf(value)));
+                                }else if("y".equals(property)){
+                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Double.valueOf(value)));
+                                }else if("salary".equals(property)){
+                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Float.valueOf(value)));
+                                }else{
+                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), value));
+                                }
                                 break;
                             case "gt":
+                                if("id".equals(property)) {
+                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Integer.valueOf(value)));
+                                }else if("x".equals(property)){
+                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Long.valueOf(value)));
+                                }else if("y".equals(property)){
+                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Double.valueOf(value)));
+                                }else if("salary".equals(property)){
+                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Float.valueOf(value)));
+                                }else{
+                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), value));
+                                }
                                 break;
                             case "lt":
+                                if("id".equals(property)) {
+                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Integer.valueOf(value)));
+                                }else if("x".equals(property)){
+                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Long.valueOf(value)));
+                                }else if("y".equals(property)){
+                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Double.valueOf(value)));
+                                }else if("salary".equals(property)){
+                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Float.valueOf(value)));
+                                }else{
+                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), value));
+                                }
                                 break;
                             default:
-                                break;
+                                throw new InvalidParameterException("Condition not in consideration\n");
                         };
                     }
                 }
             }
-        }
-        return workers;
+            //    predicate = cb.and(predicate, cb.equal(root.get("property1"), filterProperty1));
+            return predicate;
+        };
+        return spec;
     }
     private boolean hasProperty (Class <?> clazz, String propertyName){
         Field[] fields = clazz.getDeclaredFields();

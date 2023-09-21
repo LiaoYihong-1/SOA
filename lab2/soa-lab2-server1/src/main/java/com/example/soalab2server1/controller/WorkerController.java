@@ -54,5 +54,5 @@ public class WorkerController {
                                                       @RequestParam(value = "page") Integer pageNum){
         return workerService.getList(sort,filters,isUpper,pageSize,pageNum);
     }
-    
+
 }
