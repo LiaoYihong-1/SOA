@@ -3,6 +3,8 @@ package com.example.soalab2server1.dao.model;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,12 +16,15 @@ import java.time.ZonedDateTime;
 @Entity
 @NoArgsConstructor
 @Table(name = "Worker")
+@JacksonXmlRootElement(localName = "WorkerFullInfos")
 public class Worker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JacksonXmlProperty(localName = "id")
     private Integer id;
 
+    @JacksonXmlProperty(localName = "name")
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -30,18 +35,23 @@ public class Worker {
     })
     private Coordinate coordinate;
 
+    @JacksonXmlProperty(localName = "creationDate")
     @Column(name = "creation_date", nullable = false)
     private ZonedDateTime creationDate;
 
+    @JacksonXmlProperty(localName = "Salary")
     @Column(name = "salary", nullable = false)
     private float salary;
 
+    @JacksonXmlProperty(localName = "startDate")
     @Column(name = "start_date",nullable = false)
     private LocalDateTime startDate;
 
+    @JacksonXmlProperty(localName = "endDate")
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+    @JacksonXmlProperty(localName = "position")
     @Column(name = "position", nullable = false,columnDefinition = "com.example.soalab2server1.dao.model.Position")
     @Enumerated(EnumType.STRING)
     private Position position;
@@ -51,5 +61,6 @@ public class Worker {
      */
     @ManyToOne
     @JoinColumn(name = "organization_id")
+    @JacksonXmlProperty(localName = "Organization")
     private Organization organization;
 }

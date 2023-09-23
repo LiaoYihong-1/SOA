@@ -1,6 +1,8 @@
 package com.example.soalab2server1.dao.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,11 +24,5 @@ public class Organization {
 
     @Column(name = "annual_turnover", nullable = false)
     private Long annualTurnover;
-
-    /**
-     * @JsonIgnore to solve problem of infinite cycle in response
-     */
-    @OneToMany(mappedBy = "organization")
-    @JsonIgnore
-    private List<Worker> workers;
+    
 }
