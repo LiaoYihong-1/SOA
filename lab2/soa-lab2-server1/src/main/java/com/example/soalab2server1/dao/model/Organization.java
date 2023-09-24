@@ -24,5 +24,5 @@ public class Organization {
 
     @Column(name = "annual_turnover", nullable = false)
     private Long annualTurnover;
-    
+
 }
