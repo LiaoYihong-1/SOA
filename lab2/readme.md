@@ -39,3 +39,31 @@ On JAX-RS side didn't finish it.
   openssl x509 -req -in certificate.csr -signkey private.key -out certificate.crt
 
 openssl pkcs12 -export -in certificate.crt -inkey private.key -out certificate.p12 -name your_alias
+
+### script to create database:
+
+CREATE TABLE Organization (
+                              id SERIAL PRIMARY KEY,
+                              full_name VARCHAR(758) NOT NULL CHECK (*LENGTH*(full_name) <= 758) UNIQUE,
+                              annual_turnover BIGINT NOT NULL CHECK (annual_turnover > 0)
+);
+CREATE TYPE Position AS ENUM (
+    'MANAGER',
+    'HUMAN_RESOURCES',
+    'HEAD_OF_DEPARTMENT',
+    'DEVELOPER',
+    'COOK'
+);
+CREATE TABLE Worker (
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL CHECK (name <> ''),
+                        coordinates_x BIGINT NOT NULL,
+                        coordinates_y DOUBLE PRECISION NOT NULL CHECK (coordinates_y > -561),
+                        creation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT *NOW*(),
+                        salary FLOAT NOT NULL CHECK (salary > 0),
+                        start_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+                        end_date DATE,
+                        position "Position" NOT NULL,
+                        organization_id INT NOT NULL,
+                        FOREIGN KEY (organization_id) REFERENCES Organization(id)
+);
