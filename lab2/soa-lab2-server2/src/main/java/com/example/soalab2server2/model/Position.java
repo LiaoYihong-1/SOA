@@ -1,4 +1,4 @@
-package com.example.soalab2server1.dao.model;
+package com.example.soalab2server2.model;
 
 public enum Position {
             MANAGER,
