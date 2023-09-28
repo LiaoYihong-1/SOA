@@ -15,8 +15,8 @@ import java.time.ZonedDateTime;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "Worker")
-@JacksonXmlRootElement(localName = "WorkerFullInfos")
+@Table(name = "worker")
+@JacksonXmlRootElement(localName = "WorkerFullInfo")
 public class Worker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

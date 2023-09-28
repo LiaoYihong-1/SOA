@@ -1,8 +1,7 @@
 package com.example.soalab2server1.service.impl;
 
-import com.example.soalab2server1.dao.model.Coordinate;
-import com.example.soalab2server1.dao.model.Position;
-import com.example.soalab2server1.dao.model.Worker;
+import com.example.soalab2server1.dao.model.*;
+import com.example.soalab2server1.dao.model.Error;
 import com.example.soalab2server1.dao.repository.WorkerRepository;
 import com.example.soalab2server1.service.operation.ServiceOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class WorkerService implements ServiceOperation<Worker> {
             return ResponseEntity.ok(optionalWorker.get());
         } else {
             Error e = new Error();
-            e.setMessage("The specified resource is not found\n");
+            e.setMessage("The specified resource is not found");
             e.setCode(404);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
         }
@@ -81,7 +80,7 @@ public class WorkerService implements ServiceOperation<Worker> {
     public ResponseEntity<?> getByMaxSalary() {
         List<Worker> workers = workerRepository.findAll();
         if (workers.size() == 0) {
-            return ResponseEntity.ok("No workers in company\n");
+            return ResponseEntity.ok("No workers in company");
         } else {
             Worker result = workers.get(0);
             for (Worker w : workers) {
@@ -97,13 +96,12 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> delete(Integer id) {
         Optional<Worker> optionalWorker = workerRepository.findById(id);
-
         if (optionalWorker.isPresent()) {
             workerRepository.delete(optionalWorker.get());
             return ResponseEntity.ok().body("Deleted");
         } else {
             Error e = new Error();
-            e.setMessage("The specified resource is not found\n");
+            e.setMessage("The specified resource is not found");
             e.setCode(404);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
         }
@@ -119,7 +117,7 @@ public class WorkerService implements ServiceOperation<Worker> {
             return ResponseEntity.ok(worker);
         } else {
             Error e = new Error();
-            e.setMessage("The specified resource is not found\n");
+            e.setMessage("The specified resource is not found");
             e.setCode(404);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
         }
@@ -164,7 +162,9 @@ public class WorkerService implements ServiceOperation<Worker> {
             return ResponseEntity.status(400).body(new Error("Invalid input", 400));
         }
         Page<Worker> pages = workerRepository.findAll(spec,pageable);
-        return ResponseEntity.ok(pages);
+        MyPage<Worker> result = new MyPage<>();
+        result.buildWithPage(pages);
+        return ResponseEntity.ok(result);
     }
 
     public Specification<Worker> filterCreate(List<String> filters) throws InvalidParameterException{

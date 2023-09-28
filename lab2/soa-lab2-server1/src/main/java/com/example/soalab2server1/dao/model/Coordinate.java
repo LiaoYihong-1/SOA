@@ -14,9 +14,9 @@ import javax.persistence.Embeddable;
 @JacksonXmlRootElement(localName = "Coordinate")
 public class Coordinate {
     @Column(name = "coordinates_x")
-    @JacksonXmlProperty(localName = "coordinates_x")
+    @JacksonXmlProperty(localName = "x")
     private Long x;
     @Column(name = "coordinates_y")
-    @JacksonXmlProperty(localName = "coordinates_y")
+    @JacksonXmlProperty(localName = "y")
     private double y;
 }
