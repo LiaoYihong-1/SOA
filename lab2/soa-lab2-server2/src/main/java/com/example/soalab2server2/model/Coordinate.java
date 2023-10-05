@@ -1,5 +1,8 @@
 package com.example.soalab2server2.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "Coordinate")
 public class Coordinate {
 
     private Long x;

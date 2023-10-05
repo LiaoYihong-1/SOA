@@ -5,7 +5,7 @@ import java.security.KeyStore;
 
 public class KeystoreVerification {
     public static void main(String[] args) {
-        String keystorePath = "./Error.java";
+        String keystorePath = "src/main/resources/certificate1.p12";
         String keystorePassword = "123456";
 
         try {

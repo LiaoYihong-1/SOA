@@ -1,17 +1,16 @@
 package com.example.soalab2server2.model;
 
 
-import com.example.soalab2server2.model.Coordinate;
-import com.example.soalab2server2.model.Organization;
-import com.example.soalab2server2.model.Position;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
+@XmlRootElement(name = "workerFullInfo")
 public class Worker {
     private Integer id;
 

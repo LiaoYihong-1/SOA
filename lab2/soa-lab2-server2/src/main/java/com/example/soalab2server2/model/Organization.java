@@ -3,7 +3,10 @@ package com.example.soalab2server2.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 @NoArgsConstructor
+@XmlRootElement(name = "Organization")
 public class Organization {
     private Integer id;
 
