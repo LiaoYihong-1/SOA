@@ -1,10 +1,10 @@
 After add certificate to ban http and not safe access, we can get worker api easily by localhost://port/workers. So Here just show what it would be before add security permit to https.
 
-![alt](https://github.com/LiaoYihong-1/SOA/tree/dev/lab2/note.png)
+![alt](./notes/note.png)
 
 But it's ok to get info with https in postman(don't know why i can do it).
 
-![alt](https://github.com/LiaoYihong-1/SOA/tree/dev/lab2/note1.png)
+![alt](./notes/note1.png)
 
 
 
@@ -40,30 +40,40 @@ On JAX-RS side didn't finish it.
 
 openssl pkcs12 -export -in certificate.crt -inkey private.key -out certificate.p12 -name your_alias
 
-### script to create database:
+### 06.10
 
-CREATE TABLE Organization (
-                              id SERIAL PRIMARY KEY,
-                              full_name VARCHAR(758) NOT NULL CHECK (*LENGTH*(full_name) <= 758) UNIQUE,
-                              annual_turnover BIGINT NOT NULL CHECK (annual_turnover > 0)
-);
-CREATE TYPE Position AS ENUM (
-    'MANAGER',
-    'HUMAN_RESOURCES',
-    'HEAD_OF_DEPARTMENT',
-    'DEVELOPER',
-    'COOK'
-);
-CREATE TABLE Worker (
-                        id SERIAL PRIMARY KEY,
-                        name VARCHAR(255) NOT NULL CHECK (name <> ''),
-                        coordinates_x BIGINT NOT NULL,
-                        coordinates_y DOUBLE PRECISION NOT NULL CHECK (coordinates_y > -561),
-                        creation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT *NOW*(),
-                        salary FLOAT NOT NULL CHECK (salary > 0),
-                        start_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-                        end_date DATE,
-                        position "Position" NOT NULL,
-                        organization_id INT NOT NULL,
-                        FOREIGN KEY (organization_id) REFERENCES Organization(id)
-);
+At first the reasons that we couldn't fix problem are that:
+
+1. We didn't put the right certificate. We should use .p12 but we put keystore
+2. We didn't put the right path to certificate in programm.
+3. We didn't set CN in certificate
+
+To solve the problems:
+
+1. put the right .p12. Just copy it from spring server
+
+2. Check what we will get after compiling
+
+   ![note5](./notes/note5.png)
+
+​	just set path like
+
+![note6](./notes/note6.png)
+
+​	Of cause absolute path might be better but i don't want to think about it
+
+3. Ignore the CN check
+
+   ![note7](./notes/note7.png)
+
+   A bad solution. We can also redone the production of certification to set right CN and then use it. But i don't want to do it//
+
+   This is not safe. In job or some formal situation don't ignore it!!!!!!!!
+
+   Final problem. How to do serialization of worker in response of company/move/. Should be like this. Create providers and then register them. But i fails. With this we can't even get response from spring. Without it all right. 
+
+![note3](./notes/note3.png)
+
+Fire - done
+
+Move - doing
