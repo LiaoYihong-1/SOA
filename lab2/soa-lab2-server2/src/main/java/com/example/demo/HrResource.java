@@ -1,29 +1,27 @@
-package com.example.soalab2server2;
+package com.example.demo;
 
-import com.example.soalab2server2.model.*;
-import com.example.soalab2server2.model.Error;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
+import javax.ws.rs.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import com.example.demo.model.Error;
+import com.example.demo.model.Organization;
+import com.example.demo.model.Worker;
 
 @Path("/hr")
 public class HrResource {
-
+    @GET
+    @Produces("text/plain")
+    public String hello() {
+        return "Hello, World!";
+    }
     @DELETE
     @Path("/fire/{id}")
     @Consumes({"application/json", "application/xml"})

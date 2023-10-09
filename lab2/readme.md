@@ -77,3 +77,9 @@ To solve the problems:
 Fire - done
 
 Move - doing
+
+### 06.10
+
+So the problem with xml is that i used realization of jax-rd in jakarta and java ee at the same time. I tried only by them separately and what i noticed is that the version of server which i used should be work with jakarta)
+
+Now the problem is that ZoneTime can't be normally turned in xml. But at least the other is normal now with xml)) 

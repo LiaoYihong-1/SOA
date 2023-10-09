@@ -1,16 +1,16 @@
-package com.example.soalab2server2.model;
+package com.example.demo.model;
+
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.Provider;
-import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.Provider;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 @Provider
 @Consumes("application/xml")

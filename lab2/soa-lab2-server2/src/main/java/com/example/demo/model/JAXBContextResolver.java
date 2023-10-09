@@ -1,4 +1,4 @@
-package com.example.soalab2server2.model;
+package com.example.demo.model;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;

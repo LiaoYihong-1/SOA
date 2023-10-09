@@ -1,4 +1,4 @@
-package com.example.soalab2server2.model;
+package com.example.demo.model;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
