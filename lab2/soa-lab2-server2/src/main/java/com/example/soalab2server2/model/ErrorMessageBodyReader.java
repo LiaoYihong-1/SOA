@@ -1,7 +1,6 @@
 package com.example.soalab2server2.model;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -14,26 +13,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+
 @Provider
 @Consumes("application/xml")
-public class CoordinateMessageBodyReader implements MessageBodyReader<Coordinate> {
+public class ErrorMessageBodyReader implements MessageBodyReader<Error> {
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return type == Coordinate.class;
+        return type == Error.class;
     }
 
     @Override
-    public Coordinate readFrom(Class<Coordinate> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+    public Error readFrom(Class<Error> type, Type genericType, Annotation[] annotations, MediaType mediaType,
                                  MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
             throws IOException, WebApplicationException {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Coordinate.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(Error.class);
 
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-            return (Coordinate) unmarshaller.unmarshal(entityStream);
+            return (Error) unmarshaller.unmarshal(entityStream);
         } catch (JAXBException e) {
-            throw new IOException("Failed to unmarshal XML into Coordinate object", e);
+            throw new IOException("Failed to unmarshal XML into Organization object", e);
         }
     }
 }

@@ -3,16 +3,21 @@ package com.example.soalab2server2.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @NoArgsConstructor
 @XmlRootElement(name = "Organization")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization {
-    private Integer id;
-
-    private String fullName;
-
-    private Long annualTurnover;
+    @XmlElement(name="id")
+    public Integer id;
+    @XmlElement(name="fullName")
+    public String fullName;
+    @XmlElement(name="annualTurnover")
+    public Long annualTurnover;
     public Integer getId() {
         return id;
     }

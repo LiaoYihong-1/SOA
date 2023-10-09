@@ -1,7 +1,6 @@
 package com.example.soalab2server2;
 
-import com.example.soalab2server2.model.Organization;
-import com.example.soalab2server2.model.Worker;
+import com.example.soalab2server2.model.*;
 import com.example.soalab2server2.model.Error;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
@@ -16,6 +15,7 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -23,40 +23,11 @@ import java.security.cert.CertificateException;
 
 @Path("/hr")
 public class HrResource {
-    @GET
-    @Produces("text/plain")
-    public String hello() {
-        return "Hello, World!";
-    }
-/*
-    @DELETE
-    @Path("/fire/{id}")
-    public Response fire(@PathParam(value = "id") Integer id){
-            // Create a JAX-RS client
-            Client client = ClientBuilder.newClient();
-
-            // Define the URL of the Spring service
-            //String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
-            String springServiceUrl = "http://localhost:8080/company/workers/" + id.toString();
-
-            // Make a GET request to the Spring service
-            String response = client.target(springServiceUrl)
-                    .request(MediaType.APPLICATION_XML)
-                    .delete(String.class);
-
-            // Close the JAX-RS client
-            client.close();
-
-            // Build a response and return it
-            return Response.status(Response.Status.OK)
-                    .entity(response)
-                    .build();
-    }
-*/
-
 
     @DELETE
     @Path("/fire/{id}")
+    @Consumes({"application/json", "application/xml"})
+    @Produces("application/json")
     public Response fire(@PathParam(value = "id") Integer id){
         try {
             // Load the keystore
@@ -123,8 +94,6 @@ public class HrResource {
             // Create a JAX-RS client with the SSLContext
             Client client = ClientBuilder.newBuilder().sslContext(sslContext)
                     .hostnameVerifier((hostname, session) -> true).build();
-
-
             // URL of the Spring endpoint
             String springServiceUrl = "https://localhost:9000/company/workers/" + workerId.toString();
 
@@ -145,14 +114,23 @@ public class HrResource {
             if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                     response1.getStatus() == Response.Status.OK.getStatusCode() &&
                     response2.getStatus() == Response.Status.OK.getStatusCode()) {
+                /*                GenericType<String> genericType = new GenericType<>() {};
+                String organization1 = response1.readEntity(genericType);
+                System.out.println("Received response entity: " + organization1);
+                GenericType<String> genericType1= new GenericType<>() {};
+                String worker1 = response.readEntity(genericType);
+                System.out.println("Received response entity: " + worker1);
+*/
                 System.out.println("No error happened");
+                Organization organization1 = response1.readEntity(Organization.class);
                 Worker worker = response.readEntity(Worker.class);
+                System.out.println("READ WORKER");
                 Organization organization = response1.readEntity(Organization.class);
                 String moveUrl = "https://localhost:9000/company/workers/" + workerId.toString();
                 worker.setOrganization(organization);
                 Response finalResponse = client.target(moveUrl)
                         .request(MediaType.APPLICATION_XML)
-                        .put(Entity.entity(worker, MediaType.APPLICATION_XML));
+                        .put(Entity.entity(worker, MediaType.APPLICATION_JSON));
                 return Response.status(Response.Status.OK)
                         .entity(worker)
                         .build();

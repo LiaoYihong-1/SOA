@@ -1,12 +1,17 @@
 package com.example.soalab2server2.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Coordinate")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Coordinate {
 
+    @XmlElement
     private Long x;
-
+    @XmlElement
     private double y;
 
     public double getY() {
