@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @JacksonXmlRootElement(localName = "Error")
-
 public class Error {
     public Error(String message,Integer code){
         this.code = code;

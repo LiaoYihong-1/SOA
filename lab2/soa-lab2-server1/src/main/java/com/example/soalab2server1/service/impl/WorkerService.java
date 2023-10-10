@@ -98,7 +98,10 @@ public class WorkerService implements ServiceOperation<Worker> {
         Optional<Worker> optionalWorker = workerRepository.findById(id);
         if (optionalWorker.isPresent()) {
             workerRepository.delete(optionalWorker.get());
-            return ResponseEntity.ok().body("Deleted");
+            Error e = new Error();
+            e.setMessage("The worker was fired successfully");
+            e.setCode(200);
+            return ResponseEntity.ok().body(e);
         } else {
             Error e = new Error();
             e.setMessage("The specified resource is not found");

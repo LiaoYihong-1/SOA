@@ -26,7 +26,6 @@ public class WorkerController {
 
     @DeleteMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> deleteWorker(@PathVariable Integer id){
-        System.out.println("deleting");
         return workerService.delete(id);
     }
 
@@ -37,6 +36,7 @@ public class WorkerController {
 
     @PutMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> updateWorker(@RequestBody Worker w, @PathVariable Integer id){
+        System.out.println("updating");
         return workerService.put(w, id);
     }
 

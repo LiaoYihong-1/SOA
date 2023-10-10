@@ -33,13 +33,14 @@ public class Worker {
             @AttributeOverride(name = "x", column = @Column(name = "coordinates_x")),
             @AttributeOverride(name = "y", column = @Column(name = "coordinates_y")),
     })
+    @JacksonXmlProperty(localName = "Coordinate")
     private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "creationDate")
     @Column(name = "creation_date", nullable = false)
     private ZonedDateTime creationDate;
 
-    @JacksonXmlProperty(localName = "Salary")
+    @JacksonXmlProperty(localName = "salary")
     @Column(name = "salary", nullable = false)
     private float salary;
 
