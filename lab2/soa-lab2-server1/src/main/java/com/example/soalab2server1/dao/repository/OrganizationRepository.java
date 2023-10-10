@@ -8,5 +8,5 @@ import java.util.Optional;
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Integer> {
     @Override
-    Optional<Organization> findById(Integer integer);
+    Optional<Organization> findById(Integer id);
 }
