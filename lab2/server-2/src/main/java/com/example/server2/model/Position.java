@@ -1,6 +1,6 @@
-package com.example.demo.model;
+package com.example.server2.model;
 
-import javax.xml.bind.annotation.XmlEnumValue;
+import jakarta.xml.bind.annotation.*;
 
 public enum Position {
     @XmlEnumValue("MANAGER")

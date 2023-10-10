@@ -1,12 +1,16 @@
-package com.example.demo.model;
+package com.example.server2.model;
 
+import com.example.server2.adapter.LocalDateAdapter;
+import com.example.server2.adapter.LocalDateTimeAdapter;
+import com.example.server2.adapter.ZonedDateTimeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -25,15 +29,18 @@ public class Worker {
     private Coordinate coordinate;
 
     @XmlElement(name = "creationDate")
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
     private ZonedDateTime creationDate;
 
     @XmlElement(name = "salary")
     private float salary;
 
     @XmlElement(name = "startDate")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime startDate;
 
     @XmlElement(name = "endDate")
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate endDate;
 
     @XmlElement(name = "position")
@@ -41,6 +48,5 @@ public class Worker {
 
     @XmlElement(name="Organization")
     private Organization organization;
-
 
 }

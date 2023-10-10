@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.server2.model;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;

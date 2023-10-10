@@ -1,31 +1,26 @@
-package com.example.demo;
+package com.example.server2;
 
+import com.example.server2.model.*;
+import com.example.server2.model.Error;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.security.KeyStore;
-import com.example.demo.model.Error;
-import com.example.demo.model.Organization;
-import com.example.demo.model.Worker;
 
 @Path("/hr")
 public class HrResource {
-    @GET
-    @Produces("text/plain")
-    public String hello() {
-        return "Hello, World!";
-    }
+
     @DELETE
     @Path("/fire/{id}")
     @Consumes({"application/json", "application/xml"})
-    @Produces("application/json")
+    @Produces("application/xml")
     public Response fire(@PathParam(value = "id") Integer id){
         try {
             // Load the keystore
@@ -71,6 +66,7 @@ public class HrResource {
 
     @PUT
     @Path("/move/{worker-id}/{id-from}/{id-to}")
+    @Produces("application/xml")
     public Response move(@PathParam(value = "worker-id") Integer workerId,
                          @PathParam(value = "id-from") Integer idFrom,
                          @PathParam(value = "id-to") Integer idTo){
@@ -120,9 +116,9 @@ public class HrResource {
                 System.out.println("Received response entity: " + worker1);
 */
                 System.out.println("No error happened");
-                Organization organization1 = response1.readEntity(Organization.class);
                 Worker worker = response.readEntity(Worker.class);
                 System.out.println("READ WORKER");
+                System.out.println(worker.getCoordinate().toString());
                 Organization organization = response1.readEntity(Organization.class);
                 String moveUrl = "https://localhost:9000/company/workers/" + workerId.toString();
                 worker.setOrganization(organization);
