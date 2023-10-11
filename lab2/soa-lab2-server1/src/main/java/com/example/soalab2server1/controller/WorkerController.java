@@ -2,17 +2,21 @@ package com.example.soalab2server1.controller;
 
 import com.example.soalab2server1.dao.model.Worker;
 import com.example.soalab2server1.service.impl.WorkerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
+@RequiredArgsConstructor
 public class WorkerController {
-    @Autowired
-    private WorkerService workerService;
+
+    private final WorkerService workerService;
 
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> addWorker(@RequestBody Worker worker){
@@ -41,17 +45,17 @@ public class WorkerController {
     }
 
     @GetMapping(value ="/company/workers/count", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> getAmountByEndDate(@RequestParam(value = "enddate") String endDate,
-                                                @RequestParam(value = "condition") String condition){
+    public ResponseEntity<?> getAmountByEndDate(@RequestParam(required = false,value = "enddate") String endDate,
+                                                @RequestParam(required = false,value = "condition") String condition)  throws InvalidParameterException {
         return workerService.getAmountByEndDate(endDate,condition);
     }
 
     @GetMapping(value ="/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> getWokersBySortAndFilter(@RequestParam(value = "sortElement") List<String> sort,
-                                                      @RequestParam(value = "filters") List<String> filters,
-                                                      @RequestParam(value = "isUpper") Boolean isUpper,
-                                                      @RequestParam(value = "pageSize") Integer pageSize,
-                                                      @RequestParam(value = "page") Integer pageNum){
+    public ResponseEntity<?> getWokersBySortAndFilter(@RequestParam(required = false, value = "sortElement") List<String> sort,
+                                                      @RequestParam(required = false,value = "filters") List<String> filters,
+                                                      @RequestParam(required = false,value = "isUpper") Boolean isUpper,
+                                                      @RequestParam(required = false,value = "pageSize") Integer pageSize,
+                                                      @RequestParam(required = false,value = "page") Integer pageNum){
         return workerService.getList(sort,filters,isUpper,pageSize,pageNum);
     }
 
