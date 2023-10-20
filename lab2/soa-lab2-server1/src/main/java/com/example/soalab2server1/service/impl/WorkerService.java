@@ -2,13 +2,17 @@ package com.example.soalab2server1.service.impl;
 
 import com.example.soalab2server1.dao.model.*;
 import com.example.soalab2server1.dao.model.Error;
+import com.example.soalab2server1.dao.repository.OrganizationRepository;
 import com.example.soalab2server1.dao.repository.WorkerRepository;
+import com.example.soalab2server1.dao.request.CreateWorkerRequest;
+import com.example.soalab2server1.dao.request.UpdateWorkerRequest;
 import com.example.soalab2server1.exception.InvalidConditionException;
 import com.example.soalab2server1.exception.InvalidParameterException;
 import com.example.soalab2server1.exception.ResourceNotFoundException;
 import com.example.soalab2server1.service.operation.ServiceOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +26,7 @@ import java.time.LocalDate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -31,7 +36,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Slf4j
 public class WorkerService implements ServiceOperation<Worker> {
-
+    private final OrganizationRepository organizationRepository;
+    private final ModelMapper modelMapper;
     private final WorkerRepository workerRepository;
 
     @Override
@@ -71,17 +77,27 @@ public class WorkerService implements ServiceOperation<Worker> {
     }
 
     @Override
-    public ResponseEntity<?> put(Worker worker, Integer id) {
+    public ResponseEntity<?> put(UpdateWorkerRequest requestWorker, Integer id) {
         if (!workerRepository.existsById(id))
             throw new ResourceNotFoundException("");
+//        if (!organizationRepository.existsById())
+//            throw new ResourceNotFoundException("");
+        Worker worker = modelMapper.map(requestWorker,Worker.class);
         worker.setId(id);
-        workerRepository.saveAndFlush(worker);
+
         return ResponseEntity.ok(worker);
     }
 
     @Override
-    public ResponseEntity<?> post(Worker worker) {
+    public ResponseEntity<?> post(CreateWorkerRequest requestWorker) {
+        if (!organizationRepository.existsById(requestWorker.getOrganization().getId()))
+            throw new ResourceNotFoundException("");
+        Worker worker = modelMapper.map(requestWorker,Worker.class);
+        log.info(worker.toString());
+        worker.setCreationDate(ZonedDateTime.now());
         workerRepository.save(worker);
+        log.info("save");
+        worker = workerRepository.saveAndFlush(worker);
         return ResponseEntity.ok(worker);
     }
 

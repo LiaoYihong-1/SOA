@@ -2,6 +2,7 @@ package com.example.soalab2server1.controller;
 
 import com.example.soalab2server1.dao.model.Worker;
 import com.example.soalab2server1.dao.request.CreateWorkerRequest;
+import com.example.soalab2server1.dao.request.UpdateWorkerRequest;
 import com.example.soalab2server1.service.impl.WorkerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class WorkerController {
     private final WorkerService workerService;
 
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE,consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> addWorker(@Valid @RequestBody Worker worker){
+    public ResponseEntity<?> addWorker(@Valid @RequestBody CreateWorkerRequest worker){
         return workerService.post(worker);
     }
 
@@ -47,10 +48,8 @@ public class WorkerController {
     }
 
     @PutMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE,consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> updateWorker(@RequestBody com.example.soalab2server1.dao.request.CreateWorkerRequest w, @PathVariable @Min(0) Integer id){
-        log.info("sdf");
-//        return workerService.put(w, id);
-        return null;
+    public ResponseEntity<?> updateWorker(@RequestBody UpdateWorkerRequest w, @PathVariable @Min(0) Integer id){
+        return workerService.put(w, id);
     }
 
     @GetMapping(value ="/company/workers/count", produces = MediaType.APPLICATION_XML_VALUE)

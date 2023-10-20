@@ -37,13 +37,13 @@ public class Worker implements Serializable {
     @NotBlank
     private String name;
 
-//    @Embedded
-//    @AttributeOverrides({
-//            @AttributeOverride(name = "x", column = @Column(name = "coordinates_x")),
-//            @AttributeOverride(name = "y", column = @Column(name = "coordinates_y")),
-//    })
-//    @JacksonXmlProperty(localName = "Coordinate")
-//    private Coordinate coordinate;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "x", column = @Column(name = "coordinates_x")),
+            @AttributeOverride(name = "y", column = @Column(name = "coordinates_y")),
+    })
+    @JacksonXmlProperty(localName = "Coordinate")
+    private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "creationDate")
     @Column(name = "creation_date", nullable = false)
@@ -72,9 +72,9 @@ public class Worker implements Serializable {
     @NotNull
     private Position position;
 
-//    @ManyToOne
-//    @JoinColumn(name = "organization_id")
-//    @JacksonXmlProperty(localName = "Organization")
-//    @NotNull
-//    private Organization organization;
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
+    @JacksonXmlProperty(localName = "Organization")
+    @NotNull
+    private Organization organization;
 }

@@ -3,6 +3,7 @@ package com.example.soalab2server1.dao.request;
 import com.example.soalab2server1.dao.model.Coordinate;
 import com.example.soalab2server1.dao.model.Organization;
 import com.example.soalab2server1.dao.model.Position;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -17,7 +18,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,33 +33,32 @@ public class CreateWorkerRequest implements Serializable {
     @NotBlank
     private String name;
 
-//    @JacksonXmlProperty(localName = "Coordinate")
-//    private Coordinate coordinate;
-//
-//    @JacksonXmlProperty(localName = "creationDate")
-//    @NotNull
-//    @CreatedDate
-//    private ZonedDateTime creationDate;
-//
-//    @JacksonXmlProperty(localName = "salary")
-//    @PositiveOrZero
-//    @NotNull
-//    private float salary;
-//
-//    @JacksonXmlProperty(localName = "startDate")
-//    @NotNull
-//    private LocalDateTime startDate;
-//
-//    @JacksonXmlProperty(localName = "endDate")
-//    @NotNull
-//    private LocalDate endDate;
-//
-//    @JacksonXmlProperty(localName = "position")
-//    @Enumerated(EnumType.STRING)
-//    @NotNull
-//    private Position position;
-//
-//    @JacksonXmlProperty(localName = "Organization")
-//    @NotNull
-//    private Organization organization;
+    @JacksonXmlProperty(localName = "Coordinate")
+    private Coordinate coordinate;
+
+    @JsonIgnore
+    @CreatedDate
+    private ZonedDateTime creationDate;
+
+    @JacksonXmlProperty(localName = "salary")
+    @PositiveOrZero
+    @NotNull
+    private float salary;
+
+    @JacksonXmlProperty(localName = "startDate")
+    @NotNull
+    private LocalDateTime startDate;
+
+    @JacksonXmlProperty(localName = "endDate")
+    @NotNull
+    private LocalDate endDate;
+
+    @JacksonXmlProperty(localName = "position")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Position position;
+
+    @JacksonXmlProperty(localName = "Organization")
+    @NotNull
+    private Organization organization;
 }
