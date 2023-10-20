@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@JacksonXmlRootElement(localName = "SortedWorkersResponse")  // 定义XML根元素的名称
+@JacksonXmlRootElement(localName = "SortedWorkersResponse")
 @Data
 @Builder
 @NoArgsConstructor

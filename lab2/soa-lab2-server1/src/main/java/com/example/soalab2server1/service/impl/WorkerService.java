@@ -48,6 +48,7 @@ public class WorkerService implements ServiceOperation<Worker> {
                 throw new InvalidConditionException("");
             }
             d = LocalDate.parse(endDate);
+            log.info(d.toString());
         } catch (InvalidConditionException e) {
             throw new InvalidConditionException("");
         } catch (Exception e) {
@@ -90,6 +91,7 @@ public class WorkerService implements ServiceOperation<Worker> {
         Sort sort1;
         List<Sort.Order> orders = new ArrayList<>();
         Class<Worker> clazz = Worker.class;
+        isUpper = true;
         if (isUpper) {
             for (String s : sort) {
                 if (!hasProperty(clazz, s)) {
