@@ -23,13 +23,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,11 +85,11 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
         if (!workerRepository.existsById(id))
-                throw new ResourceNotFoundException("");
+            throw new ResourceNotFoundException("");
         //todo
         if (!organizationRepository.existsById(requestWorker.getOrganization().getId()))
-                throw new ResourceNotFoundException("");
-        Worker worker = modelMapper.map(requestWorker,Worker.class);
+            throw new ResourceNotFoundException("");
+        Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
         worker = workerRepository.saveAndFlush(worker);
         return ResponseEntity.ok(worker);
@@ -97,7 +100,7 @@ public class WorkerService implements ServiceOperation<Worker> {
         //todo
         if (!organizationRepository.existsById(requestWorker.getOrganization().getId()))
             throw new ResourceNotFoundException("");
-        Worker worker = modelMapper.map(requestWorker,Worker.class);
+        Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setCreationDate(ZonedDateTime.now());
         log.info("save");
         worker = workerRepository.saveAndFlush(worker);
@@ -106,149 +109,63 @@ public class WorkerService implements ServiceOperation<Worker> {
 
     @Override
     public com.example.soalab2server1.dao.model.Page<?> getList(List<String> sortElements, List<String> filters, Boolean isUpper, Integer pageSize, Integer pageNum) {
-        //[id[eq]=1, coordinates.x[gte]=2]
-        // id
-        // eq
-        // 1
-        Pattern nestedFieldNamePattern = Pattern.compile("(.*)\\.(.*)");
-        Pattern lhsPattern = Pattern.compile("(.*)\\[(.*)\\]=(.*)");
+        //todo
+        // check for pattern match
+        // check for ne qe for string
+        if (sortElements == null || sortElements.isEmpty() || filters.isEmpty() || isUpper == null)
+            throw new InvalidParameterException("");
 
-        if (sortElements != null && !sortElements.isEmpty()) {
-            Boolean finalIsUpper = isUpper;
-            List<Sort.Order> orders = sortElements.stream()
-                    .map(element -> {
-                        boolean isAscending = finalIsUpper != null && finalIsUpper;
-                        return isAscending ?
-                                new Sort.Order(Sort.Direction.ASC, element)
-                                : new Sort.Order(Sort.Direction.DESC, element);
-                    })
-                    .toList();
-            PageRequest pageable = PageRequest.of(pageNum, pageSize,
-                    Sort.by(orders));
-            val entities = workerRepository.findAll(RequestSpecification.of(filters), pageable);
+        if (sortElements.size() != sortElements.stream().distinct().count())
+            throw new InvalidParameterException("");
 
-            return com.example.soalab2server1.dao.model.Page.of(entities);
-        }
-        return null;
-        //sort
-//        Sort sort1;
-//        List<Sort.Order> orders = new ArrayList<>();
-//        Class<Worker> clazz = Worker.class;
-//        isUpper = true;
-//        if (isUpper) {
-//            for (String s : sort) {
-//                if (!isSortableField(clazz, s)) {
-//                    return ResponseEntity.status(400).body(new Error("Invalid request", 400));
-//                }
-//                orders.add(new Sort.Order(Sort.Direction.ASC, s));
-//            }
-//        } else {
-//            for (String s : sort) {
-//                if (!isSortableField(clazz, s)) {
-//                    return ResponseEntity.status(400).body(new Error("Invalid request", 400));
-//                }
-//                orders.add(new Sort.Order(Sort.Direction.DESC, s));
-//            }
-//        }
-//        sort1 = Sort.by(orders);
-//        //page
-//        Pageable pageable = PageRequest.of(pageNum, pageSize, sort1);
-//        //filter
-//        Specification<Worker> spec;
-//        try {
-//            spec = filterCreate(filters);
-//        } catch (InvalidParameterException e) {
-//            return ResponseEntity.status(400).body(new Error("Invalid input", 400));
-//        }
-//        Page<Worker> pages = workerRepository.findAll(spec, pageable);
-//        return ResponseEntity.ok(com.example.soalab2server1.dao.model.Page.of(pages));
+        sortElements.forEach(it -> {
+            if (!isSortableField(Worker.class, it)) {
+                throw new InvalidParameterException("");
+            }
+        });
+
+        filters.forEach(it -> {
+            try {
+                String[] parts = it.split("\\[|\\]");
+                String field = parts[0];
+                String value = parts[2].split("=")[1];
+                String operator = parts[1];
+
+                if (!operator.matches("eq|ne|gt|lt|lte|gte"))
+                        throw new InvalidParameterException("");
+                if (
+                        (field.equals("name")
+                                || field.equals("position")
+                                || field.equals("organization.name"))
+                                && (!operator.matches("eq|ne")))
+                    throw new InvalidParameterException("");
+                
+                SimpleDateFormat creationdateDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                SimpleDateFormat startdateDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                if (field.equals("creationdate")) {
+                    Date date = creationdateDateFormat.parse(value);
+                }
+                if (field.equals("startdate") || field.equals("enddate")) {
+                    Date date = startdateDateFormat.parse(value);
+                }
+
+            } catch (Exception ex) {
+                throw new InvalidParameterException("");
+            }
+        });
+
+        List<Sort.Order> orders = sortElements.stream()
+                .map(element -> isUpper ?
+                        new Sort.Order(Sort.Direction.ASC, element)
+                        : new Sort.Order(Sort.Direction.DESC, element))
+                .toList();
+        PageRequest pageable = PageRequest.of(pageNum, pageSize,
+                Sort.by(orders));
+        val entities = workerRepository.findAll(RequestSpecification.of(filters), pageable);
+        return com.example.soalab2server1.dao.model.Page.of(entities);
     }
 
-//    public Specification<Worker> filterCreate(List<String> filters) throws InvalidParameterException {
-//        Specification<Worker> spec = (root, query, cb) -> {
-//            Join<Worker, Coordinate> coordinateJoin = root.join("coordinate", JoinType.INNER);
-//            Predicate predicate = cb.conjunction();
-//            for (String filter : filters) {
-//                if (filter != null && !filter.isEmpty()) {
-//                    String conditionRegex = "\\((.*?)\\)";
-//                    String valueRegex = "\\)(.*?)$";
-//                    String propertyRegex = "(.*?)\\(";
-//                    Pattern conditionPattern = Pattern.compile(conditionRegex);
-//                    Matcher conditionMatcher = conditionPattern.matcher(filter);
-//
-//                    Pattern valuePattern = Pattern.compile(valueRegex);
-//                    Matcher valueMatcher = valuePattern.matcher(filter);
-//
-//                    Pattern propertyPattern = Pattern.compile(propertyRegex);
-//                    Matcher propertyMatcher = propertyPattern.matcher(filter);
-//
-//                    if (conditionMatcher.find() && valueMatcher.find() && propertyMatcher.find()) {
-//                        String property = propertyMatcher.group(1);
-//                        String value = valueMatcher.group(1);
-//                        System.out.println(property);
-//                        if ("coordinate.x".equals(property)) {
-//                            property = "x";
-//                        }
-//                        if ("coordinate.y".equals(property)) {
-//                            property = "y";
-//                        }
-//                        switch (conditionMatcher.group(1)) {
-//                            case "eq" -> {
-//                                /*
-//                                 * coordinateJoin only for @Embedded(here is like coordinate.x) object
-//                                 * root only for not @Embedded object
-//                                 */
-//                                if ("id".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.equal(root.get(property), Integer.valueOf(value)));
-//                                } else if ("x".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Long.valueOf(value)));
-//                                } else if ("y".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.equal(coordinateJoin.get(property), Double.valueOf(value)));
-//                                } else if ("salary".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.equal(root.get(property), Float.valueOf(value)));
-//                                } else {
-//                                    predicate = cb.and(predicate, cb.equal(root.get(property), value));
-//                                }
-//                            }
-//                            case "gt" -> {
-//                                if ("id".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.greaterThan(root.get(property), Integer.valueOf(value)));
-//                                } else if ("x".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Long.valueOf(value)));
-//                                } else if ("y".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.greaterThan(coordinateJoin.get(property), Double.valueOf(value)));
-//                                } else if ("salary".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.greaterThan(root.get(property), Float.valueOf(value)));
-//                                } else {
-//                                    predicate = cb.and(predicate, cb.greaterThan(root.get(property), value));
-//                                }
-//                            }
-//                            case "lt" -> {
-//                                if ("id".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.lessThan(root.get(property), Integer.valueOf(value)));
-//                                }
-//                                if ("x".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Long.valueOf(value)));
-//                                }
-//                                if ("y".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.lessThan(coordinateJoin.get(property), Double.valueOf(value)));
-//                                }
-//                                if ("salary".equals(property)) {
-//                                    predicate = cb.and(predicate, cb.lessThan(root.get(property), Float.valueOf(value)));
-//                                } else {
-//                                    predicate = cb.and(predicate, cb.lessThan(root.get(property), value));
-//                                }
-//                            }
-//                            default -> throw new InvalidParameterException("Condition not in consideration\n");
-//                        }
-//
-//                    }
-//                }
-//            }
-//            return predicate;
-//        };
-//        return spec;
-//    }
     private boolean isSortableField(Class<?> clazz, String fieldName) {
         try {
             Field field = clazz.getDeclaredField(fieldName);
