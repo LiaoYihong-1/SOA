@@ -60,5 +60,29 @@ public class ControllerExceptionHandler {
                 .body(message);
 
     }
+    @ExceptionHandler(value = {org.springframework.http.converter.HttpMessageNotReadableException.class})
+    public ResponseEntity<?> constraintViolationException(org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
+        log.info("HttpMessageNotReadableException");
+        Error message = new Error(
+                "HTTP method is not supported",
+                HttpStatus.METHOD_NOT_ALLOWED.value()
+        );
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .contentType(MediaType.APPLICATION_XML)
+                .body(message);
+
+    }
+    @ExceptionHandler(value = {org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<?> constraintViolationException(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex, WebRequest request) {
+        log.info("MethodArgumentTypeMismatchException");
+        Error message = new Error(
+                "Invalid request",
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_XML)
+                .body(message);
+
+    }
 
 }

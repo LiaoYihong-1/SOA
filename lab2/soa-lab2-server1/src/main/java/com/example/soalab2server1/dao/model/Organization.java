@@ -30,7 +30,4 @@ public class Organization {
     @Min(0)
     private Long annualTurnover;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "organization")
-//    private List<Worker> books;
 }

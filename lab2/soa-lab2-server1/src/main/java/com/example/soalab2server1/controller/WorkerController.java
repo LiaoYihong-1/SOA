@@ -1,12 +1,11 @@
 package com.example.soalab2server1.controller;
 
-import com.example.soalab2server1.dao.model.Worker;
 import com.example.soalab2server1.dao.request.CreateWorkerRequest;
-import com.example.soalab2server1.dao.request.UpdateWorkerRequest;
+import com.example.soalab2server1.dao.request.WorkerInfo;
 import com.example.soalab2server1.service.impl.WorkerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.security.InvalidParameterException;
-import java.util.Arrays;
 import java.util.List;
 @Validated
 @RestController
@@ -29,7 +27,7 @@ public class WorkerController {
 
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE,consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> addWorker(@Valid @RequestBody CreateWorkerRequest worker){
-        return workerService.post(worker);
+        return workerService.createWorker(worker);
     }
 
     @GetMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE)
@@ -48,8 +46,8 @@ public class WorkerController {
     }
 
     @PutMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE,consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> updateWorker(@RequestBody UpdateWorkerRequest w, @PathVariable @Min(0) Integer id){
-        return workerService.put(w, id);
+    public ResponseEntity<?> updateWorker(@RequestBody WorkerInfo w, @PathVariable @Min(0) Integer id){
+        return workerService.updateWorker(w, id);
     }
 
     @GetMapping(value ="/company/workers/count", produces = MediaType.APPLICATION_XML_VALUE)
@@ -59,11 +57,13 @@ public class WorkerController {
     }
 
     @GetMapping(value ="/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> getWorkersBySortAndFilter(@RequestParam(required = false, value = "sortElement") List<String> sort,
-                                                      @RequestParam(required = false,value = "filter") List<String> filters,
-                                                      @RequestParam(required = false,value = "isUpper") Boolean isUpper,
-                                                      @RequestParam(required = false,value = "pageSize") Integer pageSize,
-                                                      @RequestParam(required = false,value = "page") Integer pageNum){
+    public com.example.soalab2server1.dao.model.Page<?> getWorkersBySortAndFilter(@RequestParam(required = false, value = "sortElements") List<String> sort,
+                                             @RequestParam(required = false,value = "filter") List<String> filters,
+                                             @RequestParam(required = false,value = "isUpper") Boolean isUpper,
+                                             @RequestParam(required = false,value = "pageSize") @Min(1) Integer pageSize,
+                                             @RequestParam(required = false,value = "page") @Min(0) Integer pageNum){
+        log.info(filters.toString());
+        log.info(sort.toString());
         return workerService.getList(sort, filters,isUpper,pageSize,pageNum);
     }
 
