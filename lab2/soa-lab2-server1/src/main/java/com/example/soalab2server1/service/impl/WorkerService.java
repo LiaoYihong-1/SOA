@@ -112,21 +112,34 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public com.example.soalab2server1.dao.model.Page<?> getList(List<String> sortElements, List<String> filters, Boolean isUpper, Integer pageSize, Integer pageNum) {
 
-//        if (filters == null || sortElements == null || sortElements.isEmpty() || filters.isEmpty() || isUpper == null)
-//            throw new InvalidParameterException("");
+        List<Sort.Order> orders;
+        PageRequest pageable = PageRequest.of(pageNum, pageSize);
+        Page<WorkerFullInfo> entities;
 
-        if (sortElements.size() != sortElements.stream().distinct().count())
-            throw new InvalidParameterException("");
-
-//        if (filters.size() != filters.stream().distinct().count())
-//            throw new InvalidParameterException("");
-
-        sortElements.forEach(it -> {
-            if (!isSortableField(Worker.class, it)) {
+        if (sortElements != null) {
+            if (sortElements.isEmpty() || isUpper == null)
                 throw new InvalidParameterException("");
-            }
-        });
-        if (filters != null)
+
+            if (sortElements.size() != sortElements.stream().distinct().count())
+                throw new InvalidParameterException("");
+
+            sortElements.forEach(it -> {
+                if (!isSortableField(Worker.class, it)) {
+                    throw new InvalidParameterException("");
+                }
+            });
+            orders = sortElements.stream()
+                    .map(element -> isUpper ?
+                            new Sort.Order(Sort.Direction.ASC, element)
+                            : new Sort.Order(Sort.Direction.DESC, element))
+                    .toList();
+            pageable = PageRequest.of(pageNum, pageSize,
+                    Sort.by(orders));
+
+        }
+        if (filters != null) {
+            if (filters.size() != filters.stream().distinct().count() || filters.isEmpty())
+                    throw new InvalidParameterException("");
             filters.forEach(it -> {
                 try {
                     String[] parts = it.split("\\[|\\]");
@@ -168,15 +181,8 @@ public class WorkerService implements ServiceOperation<Worker> {
                     throw new InvalidParameterException("");
                 }
             });
-
-        List<Sort.Order> orders = sortElements.stream()
-                .map(element -> isUpper ?
-                        new Sort.Order(Sort.Direction.ASC, element)
-                        : new Sort.Order(Sort.Direction.DESC, element))
-                .toList();
-        PageRequest pageable = PageRequest.of(pageNum, pageSize,
-                Sort.by(orders));
-        val entities = workerRepository.findAll(RequestSpecification.of(filters), pageable)
+        }
+        entities = workerRepository.findAll(RequestSpecification.of(filters), pageable)
                 .map(it -> modelMapper.map(it, WorkerFullInfo.class));
         return com.example.soalab2server1.dao.model.Page.of(entities);
     }
