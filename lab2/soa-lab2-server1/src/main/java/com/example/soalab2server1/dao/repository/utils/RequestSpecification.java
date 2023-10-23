@@ -7,7 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
@@ -25,11 +31,11 @@ public class RequestSpecification implements Specification<Worker> {
                 String field = parts[0];
                 String value = parts[2].split("=")[1];
                 String operator = parts[1];
-                //todo parse date + double 
+
                 Path<?> path = getPath(root, field);
 
                 if (path != null) {
-                    Predicate predicate = buildPredicate(path, operator, value, criteriaBuilder);
+                    Predicate predicate = buildPredicate(path, field, operator, value, criteriaBuilder);
                     if (predicate != null) {
                         predicates.add(predicate);
                     }
@@ -38,14 +44,36 @@ public class RequestSpecification implements Specification<Worker> {
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 
-    private Predicate buildPredicate(Path<?> path, String operator, String value, CriteriaBuilder criteriaBuilder) {
+    private Predicate buildPredicate(
+            Path<?> path,
+            String field,
+            String operator,
+            String value,
+            CriteriaBuilder criteriaBuilder
+    ) {
+        Object parsedValue = parseValue(value, field);
+
         return switch (operator) {
             case "eq" -> criteriaBuilder.equal(path.as(String.class), value);
             case "ne" -> criteriaBuilder.notEqual(path.as(String.class), value);
-            case "gt" -> criteriaBuilder.greaterThan(path.as(String.class), value);
-            case "lt" -> criteriaBuilder.lessThan(path.as(String.class), value);
-            case "lte" -> criteriaBuilder.lessThanOrEqualTo(path.as(String.class), value);
-            case "gte" -> criteriaBuilder.greaterThanOrEqualTo(path.as(String.class), value);
+            case "gt" -> criteriaBuilder.greaterThan((Expression<? extends Comparable>) path, (Comparable) parsedValue);
+            case "lt" -> criteriaBuilder.lessThan((Expression<? extends Comparable>) path, (Comparable) parsedValue);
+            case "lte" ->
+                    criteriaBuilder.lessThanOrEqualTo((Expression<? extends Comparable>) path, (Comparable) parsedValue);
+            case "gte" ->
+                    criteriaBuilder.greaterThanOrEqualTo((Expression<? extends Comparable>) path, (Comparable) parsedValue);
+            default -> null;
+        };
+    }
+
+    private Object parseValue(String value, String field) {
+        return switch (field) {
+            case "creationdate" -> ZonedDateTime.parse(value);
+            case "startdate" -> LocalDate.parse(value).atStartOfDay();
+            case "enddate" -> LocalDate.parse(value);
+            case "id", "organization.id" -> Integer.valueOf(value);
+            case "organization.annualTurnover", "coordinates.x" -> Long.valueOf(value);
+            case "salary", "coordinates.y" -> Float.valueOf(value);
             default -> null;
         };
     }
