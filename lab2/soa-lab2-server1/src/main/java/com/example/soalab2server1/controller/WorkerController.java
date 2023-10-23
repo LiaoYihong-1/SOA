@@ -62,8 +62,6 @@ public class WorkerController {
                                              @RequestParam(required = false,value = "isUpper") Boolean isUpper,
                                              @RequestParam(required = false,value = "pageSize") @Min(1) Integer pageSize,
                                              @RequestParam(required = false,value = "page") @Min(0) Integer pageNum){
-        log.info(filters.toString());
-        log.info(sort.toString());
         return workerService.getList(sort, filters,isUpper,pageSize,pageNum);
     }
 

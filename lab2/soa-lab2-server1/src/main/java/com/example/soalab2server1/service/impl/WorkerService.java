@@ -49,7 +49,7 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> getById(Integer id) {
         Worker optionalWorker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
-        return ResponseEntity.ok(optionalWorker);
+        return ResponseEntity.ok(modelMapper.map(optionalWorker,WorkerFullInfo.class));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> getByMaxSalary() {
         Worker worker = workerRepository.findWorkerByMaxSalary().orElseThrow(() -> new ResourceNotFoundException(""));
-        return ResponseEntity.ok(worker);
+        return ResponseEntity.ok(modelMapper.map(worker,WorkerFullInfo.class));
     }
 
     @Override
@@ -86,36 +86,39 @@ public class WorkerService implements ServiceOperation<Worker> {
     public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
         if (!workerRepository.existsById(id))
             throw new ResourceNotFoundException("");
-        //todo
-        if (!organizationRepository.existsById(requestWorker.getOrganization().getId()))
+        if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
+        && !organizationRepository.findById(requestWorker.getOrganization().getId()).get()
+                .equals(requestWorker.getOrganization()))
             throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
         worker = workerRepository.saveAndFlush(worker);
-        return ResponseEntity.ok(worker);
+        return ResponseEntity.ok(modelMapper.map(worker,WorkerFullInfo.class));
     }
 
     @Override
     public ResponseEntity<?> createWorker(CreateWorkerRequest requestWorker) {
-        //todo
-        if (!organizationRepository.existsById(requestWorker.getOrganization().getId()))
+        if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
+                && !organizationRepository.findById(requestWorker.getOrganization().getId()).get()
+                .equals(requestWorker.getOrganization()))
             throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setCreationDate(ZonedDateTime.now());
         log.info("save");
         worker = workerRepository.saveAndFlush(worker);
-        return ResponseEntity.ok(worker);
+        return ResponseEntity.ok(modelMapper.map(worker,WorkerFullInfo.class));
     }
 
     @Override
     public com.example.soalab2server1.dao.model.Page<?> getList(List<String> sortElements, List<String> filters, Boolean isUpper, Integer pageSize, Integer pageNum) {
-        //todo
-        // check for pattern match
-        // check for ne qe for string
+
         if (sortElements == null || sortElements.isEmpty() || filters.isEmpty() || isUpper == null)
             throw new InvalidParameterException("");
 
         if (sortElements.size() != sortElements.stream().distinct().count())
+            throw new InvalidParameterException("");
+
+        if (filters.size() != filters.stream().distinct().count())
             throw new InvalidParameterException("");
 
         sortElements.forEach(it -> {
@@ -132,14 +135,14 @@ public class WorkerService implements ServiceOperation<Worker> {
                 String operator = parts[1];
 
                 if (!operator.matches("eq|ne|gt|lt|lte|gte"))
-                        throw new InvalidParameterException("");
+                    throw new InvalidParameterException("");
                 if (
                         (field.equals("name")
                                 || field.equals("position")
                                 || field.equals("organization.name"))
                                 && (!operator.matches("eq|ne")))
                     throw new InvalidParameterException("");
-                
+
                 SimpleDateFormat creationdateDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                 SimpleDateFormat startdateDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -149,7 +152,18 @@ public class WorkerService implements ServiceOperation<Worker> {
                 if (field.equals("startdate") || field.equals("enddate")) {
                     Date date = startdateDateFormat.parse(value);
                 }
-
+                if (       field.equals("id")
+                        || field.equals("organization.annualTurnover")
+                        || field.equals("organization.id")
+                        || field.equals("salary")
+                        || field.equals("coordinates.x")
+                        || field.equals("coordinates.y")) {
+                    Float.parseFloat(value);
+                }
+                if(         field.equals("position")
+                        && !value.toUpperCase()
+                        .matches("MANAGER|HUMAN_RESOURCES|HEAD_OF_DEPARTMENT|DEVELOPER|COOK"))
+                    throw new InvalidParameterException("");
             } catch (Exception ex) {
                 throw new InvalidParameterException("");
             }
@@ -162,7 +176,8 @@ public class WorkerService implements ServiceOperation<Worker> {
                 .toList();
         PageRequest pageable = PageRequest.of(pageNum, pageSize,
                 Sort.by(orders));
-        val entities = workerRepository.findAll(RequestSpecification.of(filters), pageable);
+        val entities = workerRepository.findAll(RequestSpecification.of(filters), pageable)
+                .map(it->modelMapper.map(it,WorkerFullInfo.class));
         return com.example.soalab2server1.dao.model.Page.of(entities);
     }
 
