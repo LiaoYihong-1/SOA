@@ -64,10 +64,10 @@ public class ControllerExceptionHandler {
     public ResponseEntity<?> constraintViolationException(org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
         log.info("HttpMessageNotReadableException");
         Error message = new Error(
-                "HTTP method is not supported",
-                HttpStatus.METHOD_NOT_ALLOWED.value()
+                "Invalid request",
+                HttpStatus.BAD_REQUEST.value()
         );
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_XML)
                 .body(message);
 

@@ -30,7 +30,7 @@ public class WorkerFullInfo {
     private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "creationDate")
-    private ZonedDateTime creationDate;
+    private LocalDateTime creationDate;
 
     @JacksonXmlProperty(localName = "salary")
     private float salary;

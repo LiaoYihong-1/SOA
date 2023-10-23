@@ -42,7 +42,7 @@ public class CreateWorkerRequest {
 
     @JacksonXmlProperty(localName = "startDate")
     @NotNull
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @JacksonXmlProperty(localName = "endDate")
     @NotNull

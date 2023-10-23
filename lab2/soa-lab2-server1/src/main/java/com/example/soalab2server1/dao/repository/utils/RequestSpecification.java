@@ -10,7 +10,8 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor(staticName = "of") @Slf4j
+@RequiredArgsConstructor(staticName = "of")
+@Slf4j
 public class RequestSpecification implements Specification<Worker> {
 
     private final List<String> filter;
@@ -18,22 +19,22 @@ public class RequestSpecification implements Specification<Worker> {
     @Override
     public Predicate toPredicate(Root<Worker> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
+        if (filter != null)
+            filter.forEach(it -> {
+                String[] parts = it.split("\\[|\\]");
+                String field = parts[0];
+                String value = parts[2].split("=")[1];
+                String operator = parts[1];
 
-        filter.forEach(it -> {
-            String[] parts = it.split("\\[|\\]");
-            String field = parts[0];
-            String value = parts[2].split("=")[1];
-            String operator = parts[1];
+                Path<?> path = getPath(root, field);
 
-            Path<?> path = getPath(root, field);
-
-            if (path != null) {
-                Predicate predicate = buildPredicate(path, operator, value, criteriaBuilder);
-                if (predicate != null) {
-                    predicates.add(predicate);
+                if (path != null) {
+                    Predicate predicate = buildPredicate(path, operator, value, criteriaBuilder);
+                    if (predicate != null) {
+                        predicates.add(predicate);
+                    }
                 }
-            }
-        });
+            });
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 
