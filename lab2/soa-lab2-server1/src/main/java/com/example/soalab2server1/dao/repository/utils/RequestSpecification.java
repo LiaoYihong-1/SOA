@@ -54,8 +54,8 @@ public class RequestSpecification implements Specification<Worker> {
         Object parsedValue = parseValue(value, field);
 
         return switch (operator) {
-            case "eq" -> criteriaBuilder.equal(path.as(String.class), value);
-            case "ne" -> criteriaBuilder.notEqual(path.as(String.class), value);
+            case "eq" -> criteriaBuilder.equal(path, parsedValue);
+            case "ne" -> criteriaBuilder.notEqual(path, parsedValue);
             case "gt" -> criteriaBuilder.greaterThan((Expression<? extends Comparable>) path, (Comparable) parsedValue);
             case "lt" -> criteriaBuilder.lessThan((Expression<? extends Comparable>) path, (Comparable) parsedValue);
             case "lte" ->
@@ -74,7 +74,7 @@ public class RequestSpecification implements Specification<Worker> {
             case "id", "organization.id" -> Integer.valueOf(value);
             case "organization.annualTurnover", "coordinates.x" -> Long.valueOf(value);
             case "salary", "coordinates.y" -> Float.valueOf(value);
-            default -> null;
+            default -> value;// null;
         };
     }
 
