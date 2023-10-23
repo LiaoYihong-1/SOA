@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.security.InvalidParameterException;
 import java.util.List;
 @Validated
@@ -25,7 +26,7 @@ public class WorkerController {
 
     private final WorkerService workerService;
 
-    @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE,consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> addWorker(@Valid @RequestBody CreateWorkerRequest worker){
         return workerService.createWorker(worker);
     }

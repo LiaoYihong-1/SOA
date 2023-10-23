@@ -104,6 +104,7 @@ public class WorkerService implements ServiceOperation<Worker> {
                 .equals(requestWorker.getOrganization()))
             throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
+        log.info(worker.toString());
         worker.setCreationDate(ZonedDateTime.now());
         worker = workerRepository.saveAndFlush(worker);
         return ResponseEntity.ok(modelMapper.map(worker, WorkerFullInfo.class));

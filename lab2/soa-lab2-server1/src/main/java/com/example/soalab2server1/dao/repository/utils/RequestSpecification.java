@@ -25,7 +25,7 @@ public class RequestSpecification implements Specification<Worker> {
                 String field = parts[0];
                 String value = parts[2].split("=")[1];
                 String operator = parts[1];
-
+                //todo parse date + double 
                 Path<?> path = getPath(root, field);
 
                 if (path != null) {

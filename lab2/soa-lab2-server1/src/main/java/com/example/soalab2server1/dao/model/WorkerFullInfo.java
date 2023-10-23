@@ -26,7 +26,7 @@ public class WorkerFullInfo {
     @JacksonXmlProperty(localName = "name")
     private String name;
 
-    @JacksonXmlProperty(localName = "Coordinate")
+    @JacksonXmlProperty(localName = "Coordinates")
     private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "creationDate")
