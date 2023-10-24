@@ -7,6 +7,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -46,21 +47,12 @@ public class HrResource {
             String springServiceUrl = "https://127.0.0.1:9000/company/workers/" + id.toString();
 
             // Make a delete request to the Spring service
-            Error e = client.target(springServiceUrl)
+            Response r = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)
-                    .delete(Error.class);
+                    .delete();
 
             // Close the JAX-RS client
-            client.close();
-            if(e.getCode() ==204) {
-                Error e1 = new Error();
-                e1.setCode(204);
-                e1.setMessage("The worker was fired successfully");
-                // Build a response and return it
-                return Response.status(Response.Status.NO_CONTENT)
-                        .entity(e1)
-                        .build();
-            }else{
+            if(r.getStatus() != Response.Status.NO_CONTENT.getStatusCode()){
                 Error e2 = new Error();
                 e2.setCode(400);
                 e2.setMessage("Invalid request");
@@ -68,6 +60,14 @@ public class HrResource {
                         .entity(e2)
                         .build();
             }
+            client.close();
+            Error e1 = new Error();
+            e1.setCode(204);
+            e1.setMessage("The worker was fired successfully");
+            // Build a response and return it
+            return Response.status(Response.Status.NO_CONTENT)
+                    .entity(e1)
+                    .build();
         }catch (NotFoundException notFoundException){
             Error e2 = new Error();
             e2.setCode(400);
@@ -131,6 +131,7 @@ public class HrResource {
                     response1.getStatus() == Response.Status.OK.getStatusCode() &&
                     response2.getStatus() == Response.Status.OK.getStatusCode()) {
                 Worker worker = response.readEntity(Worker.class);
+                System.out.println(worker.getStartDate());
                 Organization organizationTo = response1.readEntity(Organization.class);
                 Organization organizationFrom = response2.readEntity(Organization.class);
                 if(!organizationFrom.getId().equals(worker.getOrganization().getId())){
@@ -145,9 +146,9 @@ public class HrResource {
                 worker.setOrganization(organizationTo);
                 client.target(moveUrl)
                         .request(MediaType.APPLICATION_XML)
-                        .put(Entity.entity(worker, MediaType.APPLICATION_JSON));
+                        .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
                 return Response.status(Response.Status.OK)
-                        .entity(worker)
+                        .entity(WorkerInfo.ConvertWorker(worker))
                         .build();
             } else {
                 Error e1 = new Error();

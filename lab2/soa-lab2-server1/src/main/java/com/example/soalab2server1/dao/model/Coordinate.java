@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Embeddable
 @Data
@@ -15,8 +17,11 @@ import javax.persistence.Embeddable;
 public class Coordinate {
     @Column(name = "coordinates_x")
     @JacksonXmlProperty(localName = "x")
+    @NotNull
     private Long x;
     @Column(name = "coordinates_y")
     @JacksonXmlProperty(localName = "y")
+    @NotNull
+    @Min(-561)
     private double y;
 }

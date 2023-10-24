@@ -1,23 +1,31 @@
 package com.example.soalab2server1.dao.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Data
 @Entity
-@NoArgsConstructor
 @Table(name = "worker")
 @JacksonXmlRootElement(localName = "WorkerFullInfo")
-public class Worker {
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class Worker implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,6 +34,8 @@ public class Worker {
 
     @JacksonXmlProperty(localName = "name")
     @Column(name = "name", nullable = false)
+    @Length(min=1, max=256)
+    @NotBlank
     private String name;
 
     @Embedded
@@ -38,30 +48,34 @@ public class Worker {
 
     @JacksonXmlProperty(localName = "creationDate")
     @Column(name = "creation_date", nullable = false)
+    @NotNull
     private ZonedDateTime creationDate;
 
     @JacksonXmlProperty(localName = "salary")
     @Column(name = "salary", nullable = false)
+    @PositiveOrZero
+    @NotNull
     private float salary;
 
     @JacksonXmlProperty(localName = "startDate")
     @Column(name = "start_date",nullable = false)
+    @NotNull
     private LocalDateTime startDate;
 
     @JacksonXmlProperty(localName = "endDate")
     @Column(name = "end_date", nullable = false)
+    @NotNull
     private LocalDate endDate;
 
     @JacksonXmlProperty(localName = "position")
-    @Column(name = "position", nullable = false,columnDefinition = "com.example.soalab2server1.dao.model.Position")
+    @Column(name = "position", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Position position;
 
-    /**
-     * Here use @JoinColumn so don't need to map organization_id again like other properties!
-     */
     @ManyToOne
     @JoinColumn(name = "organization_id")
     @JacksonXmlProperty(localName = "Organization")
+    @NotNull
     private Organization organization;
 }

@@ -25,19 +25,19 @@ public class Worker {
     @XmlElement(name = "name")
     private String name;
 
-    @XmlElement(name="Coordinate")
+    @XmlElement(name="Coordinates")
     private Coordinate coordinate;
 
     @XmlElement(name = "creationDate")
-    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
-    private ZonedDateTime creationDate;
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    private LocalDateTime creationDate;
 
     @XmlElement(name = "salary")
     private float salary;
 
     @XmlElement(name = "startDate")
-    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
-    private LocalDateTime startDate;
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    private LocalDate startDate;
 
     @XmlElement(name = "endDate")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
