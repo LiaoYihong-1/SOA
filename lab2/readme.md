@@ -83,3 +83,27 @@ Move - doing
 So the problem with xml is that i used realization of jax-rd in jakarta and java ee at the same time. I tried only by them separately and what i noticed is that the version of server which i used should be work with jakarta)
 
 Now the problem is that ZoneTime can't be normally turned in xml. But at least the other is normal now with xml)) 
+
+### 10.24
+
+Zonetime xml solved with adapter
+
+Add DefaultExceptionMapper to solve problem of verification of url.
+
+**Problem**:
+
+Add ssl self-sign to protect payara server by these steps:
+
+https://blog.payara.fish/securing-payara-server-with-custom-ssl-certificate
+
+But don't know how to access it after add it.
+
+![note3](./notes/note8.png)
+
+We can't close security in http-listener to quit this function.
+
+All certifications put in the directory certifications.
+
+Password: 123456
+
+Alias: localhost
