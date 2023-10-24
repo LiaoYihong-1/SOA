@@ -52,10 +52,10 @@ public class RequestSpecification implements Specification<Worker> {
             CriteriaBuilder criteriaBuilder
     ) {
         Object parsedValue = parseValue(value, field);
-
+        //todo check db
         return switch (operator) {
-            case "eq" -> criteriaBuilder.equal(path, parsedValue);
-            case "ne" -> criteriaBuilder.notEqual(path, parsedValue);
+            case "eq" -> criteriaBuilder.equal((Expression<? extends Comparable>) path, (Comparable) parsedValue);
+            case "ne" -> criteriaBuilder.notEqual((Expression<? extends Comparable>)  path, (Comparable) parsedValue);
             case "gt" -> criteriaBuilder.greaterThan((Expression<? extends Comparable>) path, (Comparable) parsedValue);
             case "lt" -> criteriaBuilder.lessThan((Expression<? extends Comparable>) path, (Comparable) parsedValue);
             case "lte" ->
