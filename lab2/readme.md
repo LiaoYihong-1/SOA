@@ -107,3 +107,13 @@ All certifications put in the directory certifications.
 Password: 123456
 
 Alias: localhost
+
+### 10.25
+
+Просто откроем security на payara и всё. На postman закроем Enable SSL certificate verification.
+
+![note3](./notes/note9.png)
+
+
+
+![note3](./notes/note10.png)
