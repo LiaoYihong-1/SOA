@@ -46,8 +46,8 @@ public class WorkerController {
         return workerService.getByMaxSalary();
     }
 
-    @PutMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE,consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> updateWorker(@RequestBody WorkerInfo w, @PathVariable @Min(0) Integer id){
+    @PutMapping(value ="/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<?> updateWorker(@RequestBody WorkerInfo w, @PathVariable @Min(0) Integer id) {
         return workerService.updateWorker(w, id);
     }
 

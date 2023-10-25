@@ -52,9 +52,8 @@ public class WorkerInfo {
     private LocalDate endDate;
 
     @JacksonXmlProperty(localName = "position")
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private Position position;
+    @NotBlank
+    private String position;
 
     @JacksonXmlProperty(localName = "Organization")
     @NotNull

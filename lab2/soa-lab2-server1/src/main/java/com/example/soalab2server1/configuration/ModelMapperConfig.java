@@ -1,5 +1,6 @@
 package com.example.soalab2server1.configuration;
 
+import com.example.soalab2server1.dao.model.Position;
 import com.example.soalab2server1.dao.model.Worker;
 import com.example.soalab2server1.dao.model.WorkerFullInfo;
 import com.example.soalab2server1.dao.request.CreateWorkerRequest;
@@ -50,12 +51,12 @@ public class ModelMapperConfig {
 
     private static void mapWorkerInfoToWorker(
             ModelMapper mapper
-    ) {
+    ) throws IllegalArgumentException {
         TypeMap<WorkerInfo, Worker> workerInfoWorker = mapper
                 .createTypeMap(WorkerInfo.class, Worker.class);
 
         Converter<LocalDate, LocalDateTime> localDateToLocalDateTime = c -> c.getSource().atStartOfDay();
-        Converter<String, String> stringToSTRING = c -> c.getSource().toUpperCase();
+        Converter<String, Position> stringToSTRING = c -> Position.valueOf(c.getSource().toUpperCase());
 
         workerInfoWorker.addMappings(mapping -> {
             mapping.using(localDateToLocalDateTime).map(

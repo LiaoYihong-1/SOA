@@ -83,7 +83,7 @@ public class WorkerService implements ServiceOperation<Worker> {
     }
 
     @Override
-    public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
+    public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id)  {
         if (!workerRepository.existsById(id))
             throw new ResourceNotFoundException("");
         if (!organizationRepository.existsById(requestWorker.getOrganization().getId())

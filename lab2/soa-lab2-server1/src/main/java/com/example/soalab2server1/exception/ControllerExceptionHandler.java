@@ -60,6 +60,18 @@ public class ControllerExceptionHandler {
                 .body(message);
 
     }
+    @ExceptionHandler(value = {java.lang.IllegalArgumentException.class})
+    public ResponseEntity<?> constraintViolationException(java.lang.IllegalArgumentException ex, WebRequest request) {
+        log.info("IllegalArgumentException");
+        Error message = new Error(
+                "Invalid request",
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_XML)
+                .body(message);
+
+    }
     @ExceptionHandler(value = {org.springframework.http.converter.HttpMessageNotReadableException.class})
     public ResponseEntity<?> constraintViolationException(org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
         log.info("HttpMessageNotReadableException");
