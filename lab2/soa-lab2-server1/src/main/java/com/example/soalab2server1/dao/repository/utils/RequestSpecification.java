@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,7 +69,7 @@ public class RequestSpecification implements Specification<Worker> {
 
     private Object parseValue(String value, String field) {
         return switch (field) {
-            case "creationdate" -> ZonedDateTime.parse(value);
+            case "creationdate" -> ZonedDateTime.parse(value).minusHours(3);
             case "startdate" -> LocalDate.parse(value).atStartOfDay();
             case "enddate" -> LocalDate.parse(value);
             case "id", "organization.id" -> Integer.valueOf(value);

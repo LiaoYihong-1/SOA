@@ -30,14 +30,13 @@ import java.time.LocalDate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -104,8 +103,7 @@ public class WorkerService implements ServiceOperation<Worker> {
                 .equals(requestWorker.getOrganization()))
             throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
-        log.info(worker.toString());
-        worker.setCreationDate(ZonedDateTime.now());
+        worker.setCreationDate(ZonedDateTime.now().withNano(0));
         worker = workerRepository.saveAndFlush(worker);
         return ResponseEntity.ok(modelMapper.map(worker, WorkerFullInfo.class));
     }
@@ -166,13 +164,18 @@ public class WorkerService implements ServiceOperation<Worker> {
                     if (field.equals("startdate") || field.equals("enddate")) {
                         Date date = startdateDateFormat.parse(value);
                     }
-                    if (field.equals("id")
-                            || field.equals("organization.annualTurnover")
-                            || field.equals("organization.id")
-                            || field.equals("salary")
-                            || field.equals("coordinates.x")
-                            || field.equals("coordinates.y")) {
+                    if (field.equals("id") || field.equals("organization.id")) {
+                        Integer.parseInt(value);
+                    }
+                    if (field.equals("organization.annualTurnover")
+                        || field.equals("coordinates.x")){
+                        Long.parseLong(value);
+                    }
+                    if (field.equals("salary")){
                         Float.parseFloat(value);
+                    }
+                    if (field.equals("coordinates.y")){
+                        Double.parseDouble(value);
                     }
                     if (field.equals("position")
                             && !value.toUpperCase()

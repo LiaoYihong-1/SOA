@@ -33,6 +33,7 @@ public class CreateWorkerRequest {
     private String name;
 
     @JacksonXmlProperty(localName = "Coordinates")
+    @NotNull
     private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "salary")
