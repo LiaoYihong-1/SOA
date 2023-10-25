@@ -55,16 +55,11 @@ public class ModelMapperConfig {
                 .createTypeMap(WorkerInfo.class, Worker.class);
 
         Converter<LocalDate, LocalDateTime> localDateToLocalDateTime = c -> c.getSource().atStartOfDay();
-        Converter<String, String> stringToSTRING = c -> c.getSource().toUpperCase();
 
         workerInfoWorker.addMappings(mapping -> {
             mapping.using(localDateToLocalDateTime).map(
                     WorkerInfo::getStartDate,
                     Worker::setStartDate
-            );
-            mapping.using(stringToSTRING).map(
-                    WorkerInfo::getPosition,
-                    Worker::setPosition
             );
         });
     }

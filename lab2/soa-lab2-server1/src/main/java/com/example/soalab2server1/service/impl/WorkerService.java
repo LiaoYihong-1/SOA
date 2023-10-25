@@ -80,7 +80,8 @@ public class WorkerService implements ServiceOperation<Worker> {
     public ResponseEntity<?> delete(Integer id) {
         Worker worker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
         workerRepository.delete(worker);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("The worker was deleted successfully");
+        Error e = new Error("The worker was deleted successfully",204);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e);
     }
 
     @Override

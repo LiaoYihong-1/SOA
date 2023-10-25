@@ -148,7 +148,7 @@ public class HrResource {
                         .request(MediaType.APPLICATION_XML)
                         .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
                 return Response.status(Response.Status.OK)
-                        .entity(WorkerInfo.ConvertWorker(worker))
+                        .entity(worker)
                         .build();
             } else {
                 Error e1 = new Error();
