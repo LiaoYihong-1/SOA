@@ -75,6 +75,20 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {org.springframework.http.converter.HttpMessageNotReadableException.class})
     public ResponseEntity<?> constraintViolationException(org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
         log.info("HttpMessageNotReadableException");
+        log.info(ex.getMessage());
+        Error message = new Error(
+                "Invalid request",
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_XML)
+                .body(message);
+
+    }
+
+    @ExceptionHandler(value = {org.springframework.web.bind.MethodArgumentNotValidException.class})
+    public ResponseEntity<?> constraintViolationException(org.springframework.web.bind.MethodArgumentNotValidException ex, WebRequest request) {
+        log.info("MethodArgumentNotValidException");
         Error message = new Error(
                 "Invalid request",
                 HttpStatus.BAD_REQUEST.value()

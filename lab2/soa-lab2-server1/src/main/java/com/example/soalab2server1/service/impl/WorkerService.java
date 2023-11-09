@@ -83,7 +83,7 @@ public class WorkerService implements ServiceOperation<Worker> {
     }
 
     @Override
-    public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id)  {
+    public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
         if (!workerRepository.existsById(id))
             throw new ResourceNotFoundException("");
         if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
@@ -122,11 +122,18 @@ public class WorkerService implements ServiceOperation<Worker> {
             if (sortElements.size() != sortElements.stream().distinct().count())
                 throw new InvalidParameterException("");
 
-            sortElements.forEach(it -> {
-                if (!isSortableField(Worker.class, it)) {
-                    throw new InvalidParameterException("");
-                }
-            });
+            sortElements.stream()
+                    .filter(it -> !it.equals("coordinates.x")
+                            && !it.equals("coordinates.y"))
+                    .forEach(it -> {
+                        if (!isSortableField(Worker.class, it)) {
+                            log.info("asdf");
+                            throw new InvalidParameterException("");
+                        }
+                    });
+            sortElements.replaceAll(it -> it.equals("coordinates.x") ? "coordinate.x" : it);
+            sortElements.replaceAll(it -> it.equals("coordinates.y") ? "coordinate.y" : it);
+
             orders = sortElements.stream()
                     .map(element -> isUpper ?
                             new Sort.Order(Sort.Direction.ASC, element)
@@ -138,7 +145,7 @@ public class WorkerService implements ServiceOperation<Worker> {
         }
         if (filters != null) {
             if (filters.size() != filters.stream().distinct().count() || filters.isEmpty())
-                    throw new InvalidParameterException("");
+                throw new InvalidParameterException("");
             filters.forEach(it -> {
                 try {
                     String[] parts = it.split("\\[|\\]");
@@ -168,13 +175,13 @@ public class WorkerService implements ServiceOperation<Worker> {
                         Integer.parseInt(value);
                     }
                     if (field.equals("organization.annualTurnover")
-                        || field.equals("coordinates.x")){
+                            || field.equals("coordinates.x")) {
                         Long.parseLong(value);
                     }
-                    if (field.equals("salary")){
+                    if (field.equals("salary")) {
                         Float.parseFloat(value);
                     }
-                    if (field.equals("coordinates.y")){
+                    if (field.equals("coordinates.y")) {
                         Double.parseDouble(value);
                     }
                     if (field.equals("position")

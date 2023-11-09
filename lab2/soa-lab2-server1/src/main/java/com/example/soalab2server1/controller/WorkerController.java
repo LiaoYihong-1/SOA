@@ -28,6 +28,7 @@ public class WorkerController {
 
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> addWorker(@Valid @RequestBody CreateWorkerRequest worker){
+        log.info(worker.toString());
         return workerService.createWorker(worker);
     }
 
