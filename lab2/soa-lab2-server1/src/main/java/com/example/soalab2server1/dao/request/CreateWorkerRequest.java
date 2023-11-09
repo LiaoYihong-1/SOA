@@ -15,6 +15,8 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -32,12 +34,14 @@ public class CreateWorkerRequest {
     @NotBlank
     private String name;
 
+    @Valid
     @JacksonXmlProperty(localName = "Coordinates")
     @NotNull
     private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "salary")
-    @PositiveOrZero
+    @Min(0)
+//    @PositiveOrZero
     @NotNull
     private float salary;
 
@@ -54,6 +58,7 @@ public class CreateWorkerRequest {
     @NotNull
     private Position position;
 
+    @Valid
     @JacksonXmlProperty(localName = "Organization")
     @NotNull
     private Organization organization;

@@ -1,6 +1,7 @@
 package com.example.soalab2server1.dao.model;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -31,6 +32,7 @@ public class Worker implements Serializable {
     @Column(name = "id")
     @JacksonXmlProperty(localName = "id")
     private Integer id;
+
 
     @JacksonXmlProperty(localName = "name")
     @Column(name = "name", nullable = false)
