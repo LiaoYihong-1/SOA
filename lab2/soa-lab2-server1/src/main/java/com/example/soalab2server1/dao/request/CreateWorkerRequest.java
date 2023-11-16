@@ -19,11 +19,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+
 
 @Data @RequiredArgsConstructor @AllArgsConstructor
 @JacksonXmlRootElement(localName = "CreateWorkerRequest")
@@ -41,7 +38,6 @@ public class CreateWorkerRequest {
 
     @JacksonXmlProperty(localName = "salary")
     @Min(0)
-//    @PositiveOrZero
     @NotNull
     private float salary;
 

@@ -3,6 +3,7 @@ package com.example.soalab2server1.dao.request;
 import com.example.soalab2server1.dao.model.Coordinate;
 import com.example.soalab2server1.dao.model.Organization;
 import com.example.soalab2server1.dao.model.Position;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;

@@ -84,11 +84,8 @@ public class WorkerService implements ServiceOperation<Worker> {
 
     @Override
     public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
-        if (!workerRepository.existsById(id))
-            throw new ResourceNotFoundException("");
-        if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
-                || !organizationRepository.findById(requestWorker.getOrganization().getId()).get()
-                .equals(requestWorker.getOrganization()))
+        if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
+        if (!organizationRepository.existsById(requestWorker.getOrganization().getId()) || !organizationRepository.findById(requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization()))
             throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
@@ -98,9 +95,7 @@ public class WorkerService implements ServiceOperation<Worker> {
 
     @Override
     public ResponseEntity<?> createWorker(CreateWorkerRequest requestWorker) {
-        if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
-                || !organizationRepository.findById(requestWorker.getOrganization().getId()).get()
-                .equals(requestWorker.getOrganization()))
+        if (!organizationRepository.existsById(requestWorker.getOrganization().getId()) || !organizationRepository.findById(requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization()))
             throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setCreationDate(ZonedDateTime.now().withNano(0));
@@ -116,36 +111,45 @@ public class WorkerService implements ServiceOperation<Worker> {
         Page<WorkerFullInfo> entities;
 
         if (sortElements != null) {
-            if (sortElements.isEmpty() || isUpper == null)
-                throw new InvalidParameterException("");
 
-            if (sortElements.size() != sortElements.stream().distinct().count())
+            if (sortElements.isEmpty() || isUpper == null) {
+                log.info("sortElements.isEmpty() || isUpper == null");
                 throw new InvalidParameterException("");
+            }
 
-            sortElements.stream()
-                    .filter(it -> !it.equals("coordinates.x")
-                            && !it.equals("coordinates.y"))
+            if (sortElements.size() != sortElements.stream().distinct().count()) {
+                log.info("sortElements.size() != sortElements.stream().distinct().count()");
+                throw new InvalidParameterException("");
+            }
+
+            sortElements.stream().filter(
+                    it -> !it.equals("coordinates.x")
+                            && !it.equals("coordinates.y")
+                            && !it.equals("organization.id")
+                            && !it.equals("organization.fullName")
+                            && !it.equals("organization.annualTurnover")
+                    )
                     .forEach(it -> {
-                        if (!isSortableField(Worker.class, it)) {
-                            log.info("asdf");
-                            throw new InvalidParameterException("");
-                        }
-                    });
+                                if (!isSortableField(Worker.class, it)) {
+                                    log.info("!isSortableField(Worker.class, it)");
+                                    throw new InvalidParameterException(it);
+                                }
+            });
+
             sortElements.replaceAll(it -> it.equals("coordinates.x") ? "coordinate.x" : it);
             sortElements.replaceAll(it -> it.equals("coordinates.y") ? "coordinate.y" : it);
 
-            orders = sortElements.stream()
-                    .map(element -> isUpper ?
-                            new Sort.Order(Sort.Direction.ASC, element)
-                            : new Sort.Order(Sort.Direction.DESC, element))
-                    .toList();
-            pageable = PageRequest.of(pageNum, pageSize,
-                    Sort.by(orders));
+
+            orders = sortElements.stream().map(element -> isUpper ? new Sort.Order(Sort.Direction.ASC, element) : new Sort.Order(Sort.Direction.DESC, element)).toList();
+
+            pageable = PageRequest.of(pageNum, pageSize, Sort.by(orders));
 
         }
         if (filters != null) {
-            if (filters.size() != filters.stream().distinct().count() || filters.isEmpty())
+            if (filters.size() != filters.stream().distinct().count() || filters.isEmpty()) {
+                log.info("filters.size() != filters.stream().distinct().count() || filters.isEmpty()");
                 throw new InvalidParameterException("");
+            }
             filters.forEach(it -> {
                 try {
                     String[] parts = it.split("\\[|\\]");
@@ -153,13 +157,11 @@ public class WorkerService implements ServiceOperation<Worker> {
                     String value = parts[2].split("=")[1];
                     String operator = parts[1];
 
-                    if (!operator.matches("eq|ne|gt|lt|lte|gte"))
-                        throw new InvalidParameterException("");
+                    if (!operator.matches("eq|ne|gt|lt|lte|gte")) throw new InvalidParameterException("");
                     if (
-                            (field.equals("name")
-                                    || field.equals("position")
-                                    || field.equals("organization.name"))
-                                    && (!operator.matches("eq|ne")))
+                            (field.equals("name") || field.equals("position")
+                            || field.equals("organization.name")) && (!operator.matches("eq|ne"))
+                    )
                         throw new InvalidParameterException("");
 
                     SimpleDateFormat creationdateDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -171,22 +173,21 @@ public class WorkerService implements ServiceOperation<Worker> {
                     if (field.equals("startdate") || field.equals("enddate")) {
                         Date date = startdateDateFormat.parse(value);
                     }
-                    if (field.equals("id") || field.equals("organization.id")) {
-                        Integer.parseInt(value);
-                    }
-                    if (field.equals("organization.annualTurnover")
-                            || field.equals("coordinates.x")) {
+                    if (field.equals("id") || field.equals("organization.id")) Integer.parseInt(value);
+
+                    if (field.equals("organization.annualTurnover") || field.equals("coordinates.x"))
                         Long.parseLong(value);
-                    }
-                    if (field.equals("salary")) {
-                        Float.parseFloat(value);
-                    }
-                    if (field.equals("coordinates.y")) {
-                        Double.parseDouble(value);
-                    }
-                    if (field.equals("position")
-                            && !value.toUpperCase()
-                            .matches("MANAGER|HUMAN_RESOURCES|HEAD_OF_DEPARTMENT|DEVELOPER|COOK"))
+
+                    if (field.equals("salary")) Float.parseFloat(value);
+
+                    if (field.equals("coordinates.y")) Double.parseDouble(value);
+
+                    if (
+                            field.equals("position")
+                                    && !value
+                                    .toUpperCase()
+                                    .matches("MANAGER|HUMAN_RESOURCES|HEAD_OF_DEPARTMENT|DEVELOPER|COOK")
+                    )
                         throw new InvalidParameterException("");
                 } catch (Exception ex) {
                     throw new InvalidParameterException("");

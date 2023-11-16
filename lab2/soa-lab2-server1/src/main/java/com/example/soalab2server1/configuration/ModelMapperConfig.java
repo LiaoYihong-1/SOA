@@ -63,6 +63,7 @@ public class ModelMapperConfig {
                     WorkerInfo::getStartDate,
                     Worker::setStartDate
             );
+
             mapping.using(stringToSTRING).map(
                     WorkerInfo::getPosition,
                     Worker::setPosition
