@@ -117,3 +117,9 @@ Alias: localhost
 
 
 ![note3](./notes/note10.png)
+
+### 11.18
+
+java -jar lab2-server2.jar
+
+just use this command and 2-nd server will be executed.
