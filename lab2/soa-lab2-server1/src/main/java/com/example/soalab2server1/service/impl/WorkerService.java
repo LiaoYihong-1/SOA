@@ -87,10 +87,10 @@ public class WorkerService implements ServiceOperation<Worker> {
         if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
         if (requestWorker.getOrganization() != null)
             if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
-                || !organizationRepository.findById(requestWorker.getOrganization().getId())
-                                            .get().equals(requestWorker.getOrganization())
-            )
-                         throw new ResourceNotFoundException("");
+                    || !organizationRepository.findById(
+                            requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
+                )
+                throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
         worker = workerRepository.saveAndFlush(worker);
@@ -99,7 +99,11 @@ public class WorkerService implements ServiceOperation<Worker> {
 
     @Override
     public ResponseEntity<?> createWorker(CreateWorkerRequest requestWorker) {
-        if (!organizationRepository.existsById(requestWorker.getOrganization().getId()) || !organizationRepository.findById(requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization()))
+        if (requestWorker.getOrganization() == null) throw new ResourceNotFoundException("");
+        if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
+                || !organizationRepository.findById(
+                        requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
+            )
             throw new ResourceNotFoundException("");
         log.info("createWorker");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
@@ -127,30 +131,18 @@ public class WorkerService implements ServiceOperation<Worker> {
                 throw new InvalidParameterException("");
             }
 
-            sortElements.stream().filter(
-                    it -> !it.equals("coordinates.x")
-                            && !it.equals("coordinates.y")
-                            && !it.equals("organization.id")
-                            && !it.equals("organization.fullName")
-                            && !it.equals("organization.annualTurnover")
-                    )
-                    .forEach(it -> {
-                                if (!isSortableField(Worker.class, it)) {
-                                    log.info("!isSortableField(Worker.class, it)");
-                                    throw new InvalidParameterException(it);
-                                }
+            sortElements.stream().filter(it -> !it.equals("coordinates.x") && !it.equals("coordinates.y") && !it.equals("organization.id") && !it.equals("organization.fullName") && !it.equals("organization.annualTurnover")).forEach(it -> {
+                if (!isSortableField(Worker.class, it)) {
+                    log.info("!isSortableField(Worker.class, it)");
+                    throw new InvalidParameterException(it);
+                }
             });
 
             sortElements.replaceAll(it -> it.equals("coordinates.x") ? "coordinate.x" : it);
             sortElements.replaceAll(it -> it.equals("coordinates.y") ? "coordinate.y" : it);
 
 
-            orders = sortElements.stream()
-                    .map(
-                            element -> isUpper ? new Sort.Order(Sort.Direction.ASC, element)
-                                                : new Sort.Order(Sort.Direction.DESC, element)
-                    )
-                    .toList();
+            orders = sortElements.stream().map(element -> isUpper ? new Sort.Order(Sort.Direction.ASC, element) : new Sort.Order(Sort.Direction.DESC, element)).toList();
 
             pageable = PageRequest.of(pageNum, pageSize, Sort.by(orders));
 
@@ -168,10 +160,7 @@ public class WorkerService implements ServiceOperation<Worker> {
                     String operator = parts[1];
 
                     if (!operator.matches("eq|ne|gt|lt|lte|gte")) throw new InvalidParameterException("");
-                    if (
-                            (field.equals("name") || field.equals("position")
-                            || field.equals("organization.fullName")) && (!operator.matches("eq|ne|gt|lt"))
-                    )
+                    if ((field.equals("name") || field.equals("position") || field.equals("organization.fullName")) && (!operator.matches("eq|ne|gt|lt")))
                         throw new InvalidParameterException("");
 
                     SimpleDateFormat creationdateDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -198,10 +187,8 @@ public class WorkerService implements ServiceOperation<Worker> {
             });
         }
         log.info("before findAll");
-        entities = workerRepository.findAll(RequestSpecification.of(filters), pageable)
-                .map(it -> modelMapper.map(it, WorkerFullInfo.class));
+        entities = workerRepository.findAll(RequestSpecification.of(filters), pageable).map(it -> modelMapper.map(it, WorkerFullInfo.class));
         return com.example.soalab2server1.dao.model.Page.of(entities);
-//        return null;
     }
 
     private boolean isSortableField(Class<?> clazz, String fieldName) {

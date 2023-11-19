@@ -12,9 +12,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 
@@ -33,8 +31,9 @@ public class CreateWorkerRequest {
     private Coordinate coordinate;
 
     @JacksonXmlProperty(localName = "salary")
-    @Min(0)
+    @PositiveOrZero
     @NotNull
+    @Digits(integer = Integer.MAX_VALUE , fraction = 2)
     private float salary;
 
     @JacksonXmlProperty(localName = "startDate")

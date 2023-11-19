@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -25,6 +27,8 @@ public class WorkerInfo {
     @NotBlank
     private String name;
 
+    @Valid
+    @NotNull
     @JacksonXmlProperty(localName = "Coordinates")
     private Coordinate coordinate;
 
@@ -35,6 +39,7 @@ public class WorkerInfo {
     @JacksonXmlProperty(localName = "salary")
     @PositiveOrZero
     @NotNull
+    @Digits(integer = Integer.MAX_VALUE , fraction = 2)
     private float salary;
 
     @JacksonXmlProperty(localName = "startDate")
@@ -49,6 +54,7 @@ public class WorkerInfo {
     @NotBlank
     private String position;
 
+    @Valid
     @JacksonXmlProperty(localName = "Organization")
     private Organization organization;
 }

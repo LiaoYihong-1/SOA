@@ -1,6 +1,8 @@
 package com.example.soalab2server1.dao.model;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -55,10 +57,12 @@ public class Worker implements Serializable {
     @NotNull
     private ZonedDateTime creationDate;
 
+
     @JacksonXmlProperty(localName = "salary")
-    @Column(name = "salary", nullable = false)
+    @Column(name = "salary", nullable = false,scale = 2)
     @PositiveOrZero
     @NotNull
+    @Digits(integer = Integer.MAX_VALUE , fraction = 2)
     private float salary;
 
     @JacksonXmlProperty(localName = "startDate")
