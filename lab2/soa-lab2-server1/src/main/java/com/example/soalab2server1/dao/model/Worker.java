@@ -1,25 +1,27 @@
 package com.example.soalab2server1.dao.model;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
+import com.example.soalab2server1.dao.model.Enum.Position;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 
+@Slf4j
 @Data
 @Entity
 @Table(name = "worker")
@@ -71,13 +73,31 @@ public class Worker implements Serializable {
 
     @JacksonXmlProperty(localName = "position")
     @Column(name = "position", nullable = false)
-    @Enumerated(EnumType.STRING)
     @NotNull
-    private Position position;
+    private String position;
+    public String getPosition() {
+        try {
+            Position tmp = Position.valueOf(position);
+            if (Arrays.asList(Position.values()).contains(tmp)) {
+                return tmp.getValue();
+            } else {
+                throw new IllegalArgumentException("");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("");
+        }
+    }
+
+    public void setPosition(Position position) {
+            if (Arrays.asList(Position.values()).contains(position)) {
+                this.position = position.getValue();
+            } else {
+                throw new IllegalArgumentException("");
+            }
+    }
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
     @JacksonXmlProperty(localName = "Organization")
-    @NotNull
     private Organization organization;
 }

@@ -1,5 +1,6 @@
 package com.example.soalab2server1.dao.model;
 
+import com.example.soalab2server1.dao.model.Enum.Position;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,7 +40,7 @@ public class WorkerFullInfo {
     private LocalDate endDate;
 
     @JacksonXmlProperty(localName = "position")
-    private Position position;
+    private String position;
 
     @JacksonXmlProperty(localName = "Organization")
     private Organization organization;

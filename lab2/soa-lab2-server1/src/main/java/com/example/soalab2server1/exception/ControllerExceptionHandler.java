@@ -63,6 +63,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {java.lang.IllegalArgumentException.class})
     public ResponseEntity<?> constraintViolationException(java.lang.IllegalArgumentException ex, WebRequest request) {
         log.info("IllegalArgumentException");
+        log.info(ex.getMessage());
         Error message = new Error(
                 "Invalid request",
                 HttpStatus.BAD_REQUEST.value()
