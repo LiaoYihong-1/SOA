@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class WorkerController {
 
-    private final WorkerService workerService;
+     private final WorkerService workerService;
 
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> addWorker(@RequestBody @Valid CreateWorkerRequest worker){
@@ -59,10 +59,10 @@ public class WorkerController {
 
     @GetMapping(value ="/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
     public com.example.soalab2server1.dao.model.Page<?> getWorkersBySortAndFilter(@RequestParam(required = false, value = "sortElements") List<String> sort,
-                                             @RequestParam(required = false,value = "filter") List<String> filters,
-                                             @RequestParam(required = false,value = "isUpper") Boolean isUpper,
-                                             @RequestParam(required = false,value = "pageSize",defaultValue = "1") @Min(1) Integer pageSize,
-                                             @RequestParam(required = false,value = "page",defaultValue = "0")   @Min(0) Integer pageNum){
+                                                                                  @RequestParam(required = false,value = "filter") List<String> filters,
+                                                                                  @RequestParam(required = false,value = "isUpper") Boolean isUpper,
+                                                                                  @RequestParam(required = false,value = "pageSize",defaultValue = "1") @Min(1) Integer pageSize,
+                                                                                  @RequestParam(required = false,value = "page",defaultValue = "0")   @Min(0) Integer pageNum){
         return workerService.getList(sort, filters,isUpper,pageSize,pageNum);
     }
 

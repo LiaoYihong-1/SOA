@@ -120,7 +120,7 @@ public class RequestSpecification implements Specification<Worker> {
             case "coordinates.y" -> root.get("coordinate").get("y");
             case "organization.fullName" -> {
                 Join<Worker, Organization> organizationJoin = root.join("organization");
-                yield organizationJoin.get("full_name");
+                yield organizationJoin.get("fullName");
             }
             case "organization.annualTurnover" -> {
                 Join<Worker, Organization> organizationJoin = root.join("organization");
