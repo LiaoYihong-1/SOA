@@ -25,6 +25,7 @@ public class HrResource {
     @Produces("application/xml")
     public Response fire(@PathParam(value = "id") Integer id){
         try {
+            // Create a JAX-RS client
             // Load the keystore
             char[] password = "123456".toCharArray();
             KeyStore keystore = KeyStore.getInstance("PKCS12");
@@ -41,33 +42,32 @@ public class HrResource {
             // Create a JAX-RS client with the SSLContext
             Client client = ClientBuilder.newBuilder().sslContext(sslContext)
                     .hostnameVerifier((hostname, session) -> true).build();
+            // URL of the Spring endpoint
+            String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
 
-
-            // Define the URL of the Spring service
-            String springServiceUrl = "https://127.0.0.1:9000/company/workers/" + id.toString();
-
-            // Make a delete request to the Spring service
-            Response r = client.target(springServiceUrl)
+            // Make a GET request and specify Accept header for JSON response
+            Response response = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)
-                    .delete();
-
-            // Close the JAX-RS client
-            if(r.getStatus() != Response.Status.NO_CONTENT.getStatusCode()){
-                Error e2 = new Error();
-                e2.setCode(400);
-                e2.setMessage("Invalid request");
+                    .get();
+            // Check the response status
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                Worker worker = response.readEntity(Worker.class);
+                String moveUrl = "https://localhost:9000/company/workers/" + id;
+                worker.setOrganization(null);
+                client.target(moveUrl)
+                        .request(MediaType.APPLICATION_XML)
+                        .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
+                return Response.status(Response.Status.OK)
+                        .entity(worker)
+                        .build();
+            } else {
+                Error e1 = new Error();
+                e1.setMessage("Invalid request");
+                e1.setCode(400);
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(e2)
+                        .entity(e1)
                         .build();
             }
-            client.close();
-            Error e1 = new Error();
-            e1.setCode(204);
-            e1.setMessage("The worker was fired successfully");
-            // Build a response and return it
-            return Response.status(Response.Status.NO_CONTENT)
-                    .entity(e1)
-                    .build();
         }catch (NotFoundException notFoundException){
             Error e2 = new Error();
             e2.setCode(400);
