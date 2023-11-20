@@ -25,7 +25,7 @@ public class ControllerExceptionHandler {
             org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class
     })
     public ResponseEntity<?> handleException(Exception ex, WebRequest request) {
-        log.error("Exception occurred", ex);
+        log.error("Exception occurred {}", ex.getMessage());
 
         String errorMessage = "Invalid request";
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
