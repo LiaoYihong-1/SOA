@@ -54,7 +54,7 @@ public class WorkerInfo {
     @NotBlank
     private String position;
 
-    @Valid
+
     @JacksonXmlProperty(localName = "Organization")
     private Organization organization;
 }

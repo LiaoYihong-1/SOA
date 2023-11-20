@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -86,11 +88,12 @@ public class WorkerService implements ServiceOperation<Worker> {
     public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
         if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
         if (requestWorker.getOrganization() != null)
-            if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
-                    || !organizationRepository.findById(
-                            requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
+            if (requestWorker.getOrganization().getId() != null)
+                if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
+                        || !organizationRepository.findById(
+                        requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
                 )
-                throw new ResourceNotFoundException("");
+                    throw new ResourceNotFoundException("");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
         worker = workerRepository.saveAndFlush(worker);
@@ -102,13 +105,14 @@ public class WorkerService implements ServiceOperation<Worker> {
         if (requestWorker.getOrganization() == null) throw new ResourceNotFoundException("");
         if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
                 || !organizationRepository.findById(
-                        requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
-            )
+                requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
+        )
             throw new ResourceNotFoundException("");
         log.info("createWorker");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setCreationDate(ZonedDateTime.now().withNano(0));
         worker = workerRepository.saveAndFlush(worker);
+        log.info(worker.toString());
         return ResponseEntity.ok(modelMapper.map(worker, WorkerFullInfo.class));
     }
 
