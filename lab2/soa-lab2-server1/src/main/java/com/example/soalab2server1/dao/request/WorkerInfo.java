@@ -40,7 +40,7 @@ public class WorkerInfo {
     @PositiveOrZero
     @NotNull
     @Digits(integer = Integer.MAX_VALUE , fraction = 2)
-    private float salary;
+    private double salary;
 
     @JacksonXmlProperty(localName = "startDate")
     @NotNull
