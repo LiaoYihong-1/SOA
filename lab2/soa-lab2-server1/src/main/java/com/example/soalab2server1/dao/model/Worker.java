@@ -63,7 +63,7 @@ public class Worker implements Serializable {
     @PositiveOrZero
     @NotNull
     @Digits(integer = Integer.MAX_VALUE , fraction = 2)
-    private float salary;
+    private double salary;
 
     @JacksonXmlProperty(localName = "startDate")
     @Column(name = "start_date",nullable = false)
