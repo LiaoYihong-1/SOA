@@ -8,13 +8,11 @@ public class LocalDateTimeAdapter extends XmlAdapter<String, LocalDateTime> {
 
     @Override
     public LocalDateTime unmarshal(String v) throws Exception {
-        // Parse the XML string to LocalDateTime
         return LocalDateTime.parse(v, DateTimeFormatter.ISO_DATE_TIME);
     }
 
     @Override
     public String marshal(LocalDateTime v) throws Exception {
-        // Convert LocalDateTime to XML string
         return v.toString();
     }
 }
