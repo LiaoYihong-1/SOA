@@ -2,22 +2,21 @@ package com.example.server2;
 
 import com.example.server2.model.*;
 import com.example.server2.model.Error;
-import jakarta.servlet.ServletException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.security.KeyStore;
 
 @Path("/hr")
+@Slf4j
 public class HrResource {
 
     private Client createConfiguredClient() throws Exception {
@@ -53,12 +52,19 @@ public class HrResource {
                     .get();
             // Check the response status
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                log.info("Response.Status.OK");
+                log.info(response.toString());
                 Worker worker = response.readEntity(Worker.class);
+                log.info("move");
                 String moveUrl = "https://localhost:9000/company/workers/" + id;
+                log.info("move1");
                 worker.setOrganization(null);
+                log.info("move1.1");
+                log.info(worker.toString());
                 client.target(moveUrl)
                         .request(MediaType.APPLICATION_XML)
                         .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
+                log.info("move2");
                 return Response.status(Response.Status.OK)
                         .entity(worker)
                         .build();

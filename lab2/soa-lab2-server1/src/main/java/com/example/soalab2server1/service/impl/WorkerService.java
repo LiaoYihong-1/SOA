@@ -51,6 +51,8 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> getById(Integer id) {
         Worker optionalWorker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        var tmp = modelMapper.map(optionalWorker, WorkerFullInfo.class);
+        log.info(tmp.toString());
         return ResponseEntity.ok(modelMapper.map(optionalWorker, WorkerFullInfo.class));
     }
 
@@ -86,6 +88,7 @@ public class WorkerService implements ServiceOperation<Worker> {
 
     @Override
     public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
+        log.info("updateWorker");
         if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
         if (requestWorker.getOrganization() != null)
             if (requestWorker.getOrganization().getId() != null)
@@ -94,9 +97,11 @@ public class WorkerService implements ServiceOperation<Worker> {
                         requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
                 )
                     throw new ResourceNotFoundException("");
+        log.info("start");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
         worker = workerRepository.saveAndFlush(worker);
+        log.info("save");
         return ResponseEntity.ok(modelMapper.map(worker, WorkerFullInfo.class));
     }
 

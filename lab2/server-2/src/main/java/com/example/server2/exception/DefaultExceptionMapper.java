@@ -5,11 +5,13 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import com.example.server2.model.Error;
+import lombok.extern.slf4j.Slf4j;
 
-@Provider
+@Provider @Slf4j
 public class DefaultExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(Throwable exception) {
+        log.info(exception.getMessage());
         Error e = new Error();
         e.setMessage("Http method is not supported");
         e.setCode(405);
