@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Although in swagger not this controller, we need it to finish lab.
- * Problem is in the description of first lab not defined id of organization but in second server need to use it.
- * So all classes about organization is created only for dealing with lab.
- */
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin("*")

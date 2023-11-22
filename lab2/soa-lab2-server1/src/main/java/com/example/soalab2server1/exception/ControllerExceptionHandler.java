@@ -9,80 +9,36 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-@ControllerAdvice @Slf4j
+@ControllerAdvice
+@Slf4j
 public class ControllerExceptionHandler {
-    @ExceptionHandler(value = {ResourceNotFoundException.class})
-    public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        log.info("ResourceNotFoundException");
-        Error message = new Error(
-                "The specified resource was not found",
-                HttpStatus.NOT_FOUND.value()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+
+    @ExceptionHandler(value = {
+            ResourceNotFoundException.class,
+            InvalidParameterException.class,
+            InvalidConditionException.class,
+            javax.validation.ConstraintViolationException.class,
+            org.hibernate.TransientPropertyValueException.class,
+            java.lang.IllegalArgumentException.class,
+            org.springframework.http.converter.HttpMessageNotReadableException.class,
+            org.springframework.web.bind.MethodArgumentNotValidException.class,
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class
+    })
+    public ResponseEntity<?> handleException(Exception ex, WebRequest request) {
+        log.error("Exception occurred {}", ex.getMessage());
+
+        String errorMessage = "Invalid request";
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+        if (ex instanceof ResourceNotFoundException) {
+            errorMessage = "The specified resource was not found";
+            httpStatus = HttpStatus.NOT_FOUND;
+        }
+
+        Error message = new Error(errorMessage, httpStatus.value());
+
+        return ResponseEntity.status(httpStatus)
                 .contentType(MediaType.APPLICATION_XML)
                 .body(message);
-
     }
-    @ExceptionHandler(value = {InvalidParameterException.class})
-    public ResponseEntity<?> invalidParameterException(InvalidParameterException ex, WebRequest request) {
-        log.info("InvalidParameterException");
-        Error message = new Error(
-                "Invalid request",
-                HttpStatus.BAD_REQUEST.value()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(message);
-
-    }
-
-    @ExceptionHandler(value = {InvalidConditionException.class})
-    public ResponseEntity<?> invalidConditionException(InvalidConditionException ex, WebRequest request) {
-        log.info("InvalidConditionException");
-        Error message = new Error(
-                "Invalid request",
-                HttpStatus.BAD_REQUEST.value()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(message);
-
-    }
-    @ExceptionHandler(value = {javax.validation.ConstraintViolationException.class})
-    public ResponseEntity<?> constraintViolationException(javax.validation.ConstraintViolationException ex, WebRequest request) {
-        log.info("ConstraintViolationException");
-        Error message = new Error(
-                "Invalid request",
-                HttpStatus.BAD_REQUEST.value()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(message);
-
-    }
-    @ExceptionHandler(value = {org.springframework.http.converter.HttpMessageNotReadableException.class})
-    public ResponseEntity<?> constraintViolationException(org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
-        log.info("HttpMessageNotReadableException");
-        Error message = new Error(
-                "Invalid request",
-                HttpStatus.BAD_REQUEST.value()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(message);
-
-    }
-    @ExceptionHandler(value = {org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<?> constraintViolationException(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex, WebRequest request) {
-        log.info("MethodArgumentTypeMismatchException");
-        Error message = new Error(
-                "Invalid request",
-                HttpStatus.BAD_REQUEST.value()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(message);
-
-    }
-
 }

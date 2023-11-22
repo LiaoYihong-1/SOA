@@ -2,47 +2,48 @@ package com.example.server2;
 
 import com.example.server2.model.*;
 import com.example.server2.model.Error;
-import jakarta.servlet.ServletException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.security.KeyStore;
 
 @Path("/hr")
+@Slf4j
 public class HrResource {
+
+    private Client createConfiguredClient() throws Exception {
+        char[] password = "123456".toCharArray();
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
+
+        try (InputStream keystoreInputStream = getClass().getResourceAsStream("../../../server1.p12")) {
+            keystore.load(keystoreInputStream, password);
+        }
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keystore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+
+        return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier((hostname, session) -> true).build();
+    }
 
     @DELETE
     @Path("/fire/{id}")
     @Produces("application/xml")
     public Response fire(@PathParam(value = "id") Integer id){
         try {
-            // Create a JAX-RS client
-            // Load the keystore
-            char[] password = "123456".toCharArray();
-            KeyStore keystore = KeyStore.getInstance("PKCS12");
-            try (InputStream keystoreInputStream = getClass().getResourceAsStream("../../../server1.p12")) {
-                keystore.load(keystoreInputStream, password);
-            }
 
-            // Create and configure the SSLContext
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keystore);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+            Client client = createConfiguredClient();
 
-            // Create a JAX-RS client with the SSLContext
-            Client client = ClientBuilder.newBuilder().sslContext(sslContext)
-                    .hostnameVerifier((hostname, session) -> true).build();
-            // URL of the Spring endpoint
             String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
 
             // Make a GET request and specify Accept header for JSON response
@@ -51,12 +52,19 @@ public class HrResource {
                     .get();
             // Check the response status
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                log.info("Response.Status.OK");
+                log.info(response.toString());
                 Worker worker = response.readEntity(Worker.class);
+                log.info("move");
                 String moveUrl = "https://localhost:9000/company/workers/" + id;
+                log.info("move1");
                 worker.setOrganization(null);
+                log.info("move1.1");
+                log.info(worker.toString());
                 client.target(moveUrl)
                         .request(MediaType.APPLICATION_XML)
                         .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
+                log.info("move2");
                 return Response.status(Response.Status.OK)
                         .entity(worker)
                         .build();
@@ -93,23 +101,9 @@ public class HrResource {
                          @PathParam(value = "id-from") Integer idFrom,
                          @PathParam(value = "id-to") Integer idTo){
         try {
-            // Create a JAX-RS client
-            // Load the keystore
-            char[] password = "123456".toCharArray();
-            KeyStore keystore = KeyStore.getInstance("PKCS12");
-            try (InputStream keystoreInputStream = getClass().getResourceAsStream("../../../server1.p12")) {
-                keystore.load(keystoreInputStream, password);
-            }
 
-            // Create and configure the SSLContext
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keystore);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+            Client client = createConfiguredClient();
 
-            // Create a JAX-RS client with the SSLContext
-            Client client = ClientBuilder.newBuilder().sslContext(sslContext)
-                    .hostnameVerifier((hostname, session) -> true).build();
             // URL of the Spring endpoint
             String springServiceUrl = "https://localhost:9000/company/workers/" + workerId.toString();
 

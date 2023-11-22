@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -30,14 +31,14 @@ import java.time.LocalDate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.Objects;
+
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,8 @@ public class WorkerService implements ServiceOperation<Worker> {
     @Override
     public ResponseEntity<?> getById(Integer id) {
         Worker optionalWorker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        var tmp = modelMapper.map(optionalWorker, WorkerFullInfo.class);
+        log.info(tmp.toString());
         return ResponseEntity.ok(modelMapper.map(optionalWorker, WorkerFullInfo.class));
     }
 
@@ -80,34 +83,41 @@ public class WorkerService implements ServiceOperation<Worker> {
     public ResponseEntity<?> delete(Integer id) {
         Worker worker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
         workerRepository.delete(worker);
-        Error e = new Error("The worker was deleted successfully",204);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("The worker was deleted successfully");
     }
 
     @Override
     public ResponseEntity<?> updateWorker(WorkerInfo requestWorker, Integer id) {
-        if (!workerRepository.existsById(id))
-            throw new ResourceNotFoundException("");
-        if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
-                || !organizationRepository.findById(requestWorker.getOrganization().getId()).get()
-                .equals(requestWorker.getOrganization()))
-            throw new ResourceNotFoundException("");
+        log.info("updateWorker");
+        if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
+        if (requestWorker.getOrganization() != null)
+            if (requestWorker.getOrganization().getId() != null)
+                if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
+                        || !organizationRepository.findById(
+                        requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
+                )
+                    throw new ResourceNotFoundException("");
+        log.info("start");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
         worker.setId(id);
         worker = workerRepository.saveAndFlush(worker);
+        log.info("save");
         return ResponseEntity.ok(modelMapper.map(worker, WorkerFullInfo.class));
     }
 
     @Override
     public ResponseEntity<?> createWorker(CreateWorkerRequest requestWorker) {
+        if (requestWorker.getOrganization() == null) throw new ResourceNotFoundException("");
         if (!organizationRepository.existsById(requestWorker.getOrganization().getId())
-                || !organizationRepository.findById(requestWorker.getOrganization().getId()).get()
-                .equals(requestWorker.getOrganization()))
+                || !organizationRepository.findById(
+                requestWorker.getOrganization().getId()).get().equals(requestWorker.getOrganization())
+        )
             throw new ResourceNotFoundException("");
+        log.info("createWorker");
         Worker worker = modelMapper.map(requestWorker, Worker.class);
-        log.info(worker.toString());
-        worker.setCreationDate(ZonedDateTime.now());
+        worker.setCreationDate(ZonedDateTime.now().withNano(0));
         worker = workerRepository.saveAndFlush(worker);
+        log.info(worker.toString());
         return ResponseEntity.ok(modelMapper.map(worker, WorkerFullInfo.class));
     }
 
@@ -119,29 +129,38 @@ public class WorkerService implements ServiceOperation<Worker> {
         Page<WorkerFullInfo> entities;
 
         if (sortElements != null) {
-            if (sortElements.isEmpty() || isUpper == null)
-                throw new InvalidParameterException("");
 
-            if (sortElements.size() != sortElements.stream().distinct().count())
+            if (sortElements.isEmpty() || isUpper == null) {
+                log.info("sortElements.isEmpty() || isUpper == null");
                 throw new InvalidParameterException("");
+            }
 
-            sortElements.forEach(it -> {
+            if (sortElements.size() != sortElements.stream().distinct().count()) {
+                log.info("sortElements.size() != sortElements.stream().distinct().count()");
+                throw new InvalidParameterException("");
+            }
+
+            sortElements.stream().filter(it -> !it.equals("coordinates.x") && !it.equals("coordinates.y") && !it.equals("organization.id") && !it.equals("organization.fullName") && !it.equals("organization.annualTurnover")).forEach(it -> {
                 if (!isSortableField(Worker.class, it)) {
-                    throw new InvalidParameterException("");
+                    log.info("!isSortableField(Worker.class, it)");
+                    throw new InvalidParameterException(it);
                 }
             });
-            orders = sortElements.stream()
-                    .map(element -> isUpper ?
-                            new Sort.Order(Sort.Direction.ASC, element)
-                            : new Sort.Order(Sort.Direction.DESC, element))
-                    .toList();
-            pageable = PageRequest.of(pageNum, pageSize,
-                    Sort.by(orders));
+
+            sortElements.replaceAll(it -> it.equals("coordinates.x") ? "coordinate.x" : it);
+            sortElements.replaceAll(it -> it.equals("coordinates.y") ? "coordinate.y" : it);
+
+
+            orders = sortElements.stream().map(element -> isUpper ? new Sort.Order(Sort.Direction.ASC, element) : new Sort.Order(Sort.Direction.DESC, element)).toList();
+
+            pageable = PageRequest.of(pageNum, pageSize, Sort.by(orders));
 
         }
         if (filters != null) {
-            if (filters.size() != filters.stream().distinct().count() || filters.isEmpty())
-                    throw new InvalidParameterException("");
+            if (filters.size() != filters.stream().distinct().count() || filters.isEmpty()) {
+                log.info("filters.size() != filters.stream().distinct().count() || filters.isEmpty()");
+                throw new InvalidParameterException("");
+            }
             filters.forEach(it -> {
                 try {
                     String[] parts = it.split("\\[|\\]");
@@ -149,13 +168,8 @@ public class WorkerService implements ServiceOperation<Worker> {
                     String value = parts[2].split("=")[1];
                     String operator = parts[1];
 
-                    if (!operator.matches("eq|ne|gt|lt|lte|gte"))
-                        throw new InvalidParameterException("");
-                    if (
-                            (field.equals("name")
-                                    || field.equals("position")
-                                    || field.equals("organization.name"))
-                                    && (!operator.matches("eq|ne")))
+                    if (!operator.matches("eq|ne|gt|lt|lte|gte")) throw new InvalidParameterException("");
+                    if ((field.equals("name") || field.equals("position") || field.equals("organization.fullName")) && (!operator.matches("eq|ne|gt|lt")))
                         throw new InvalidParameterException("");
 
                     SimpleDateFormat creationdateDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -167,25 +181,22 @@ public class WorkerService implements ServiceOperation<Worker> {
                     if (field.equals("startdate") || field.equals("enddate")) {
                         Date date = startdateDateFormat.parse(value);
                     }
-                    if (field.equals("id")
-                            || field.equals("organization.annualTurnover")
-                            || field.equals("organization.id")
-                            || field.equals("salary")
-                            || field.equals("coordinates.x")
-                            || field.equals("coordinates.y")) {
-                        Float.parseFloat(value);
-                    }
-                    if (field.equals("position")
-                            && !value.toUpperCase()
-                            .matches("MANAGER|HUMAN_RESOURCES|HEAD_OF_DEPARTMENT|DEVELOPER|COOK"))
-                        throw new InvalidParameterException("");
+                    if (field.equals("id") || field.equals("organization.id")) Integer.parseInt(value);
+
+                    if (field.equals("organization.annualTurnover") || field.equals("coordinates.x"))
+                        Long.parseLong(value);
+
+                    if (field.equals("salary")) Float.parseFloat(value);
+
+                    if (field.equals("coordinates.y")) Double.parseDouble(value);
+
                 } catch (Exception ex) {
                     throw new InvalidParameterException("");
                 }
             });
         }
-        entities = workerRepository.findAll(RequestSpecification.of(filters), pageable)
-                .map(it -> modelMapper.map(it, WorkerFullInfo.class));
+        log.info("before findAll");
+        entities = workerRepository.findAll(RequestSpecification.of(filters), pageable).map(it -> modelMapper.map(it, WorkerFullInfo.class));
         return com.example.soalab2server1.dao.model.Page.of(entities);
     }
 
