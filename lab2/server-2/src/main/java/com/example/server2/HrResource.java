@@ -23,7 +23,7 @@ public class HrResource {
         char[] password = "123456".toCharArray();
         KeyStore keystore = KeyStore.getInstance("PKCS12");
 
-        try (InputStream keystoreInputStream = getClass().getResourceAsStream("../../../server1.p12")) {
+        try (InputStream keystoreInputStream = getClass().getResourceAsStream("../../../keystore.jks")) {
             keystore.load(keystoreInputStream, password);
         }
 
