@@ -41,11 +41,11 @@ public class HrResource {
     @Produces("application/xml")
     public Response fire(@PathParam(value = "id") Integer id){
         try {
-
+            log.info("client");
             Client client = createConfiguredClient();
 
             String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
-
+            log.info("before response");
             // Make a GET request and specify Accept header for JSON response
             Response response = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)

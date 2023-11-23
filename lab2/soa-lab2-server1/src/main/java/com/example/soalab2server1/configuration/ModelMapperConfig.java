@@ -77,8 +77,7 @@ public class ModelMapperConfig {
                 .createTypeMap(Worker.class, WorkerFullInfo.class);
 
         Converter<LocalDateTime, LocalDate> localDateToLocalDateTime = c -> c.getSource().toLocalDate();
-        Converter<ZonedDateTime, LocalDateTime> zonedDateTimeToLocalDateTime = c ->c.getSource()
-                .toLocalDateTime().withNano(0);
+        Converter<ZonedDateTime, LocalDateTime> zonedDateTimeToLocalDateTime = c ->c.getSource().withNano(0).toLocalDateTime();
 
         workerInfoWorker.addMappings(mapping -> {
             mapping.using(localDateToLocalDateTime).map(
