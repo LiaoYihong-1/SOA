@@ -2,6 +2,7 @@ package com.example.server2;
 
 import com.example.server2.model.*;
 import com.example.server2.model.Error;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.naming.NamingException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.InputStream;
@@ -18,6 +20,17 @@ import java.security.KeyStore;
 @Path("/hr")
 @Slf4j
 public class HrResource {
+//    @Inject
+//    private HelloWorld helloWorldEjb;
+    public HrResource() throws NamingException {
+    }
+    // java -jar ../t2/payara-micro-6.2023.11.jar --ssLPort 9090 --deploy server2.war
+//    @GET
+//    @Path("/test")
+//    public void fire() {
+//        System.out.println("test_ejb");
+//        System.out.println(helloWorldEjb.getHelloWorld());
+//    }
 
     private Client createConfiguredClient() throws Exception {
         char[] password = "123456".toCharArray();
@@ -46,25 +59,24 @@ public class HrResource {
 
             String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
             log.info("before response");
-            // Make a GET request and specify Accept header for JSON response
+
             Response response = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)
                     .get();
-            // Check the response status
+
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                log.info("Response.Status.OK");
-                log.info(response.toString());
+
                 Worker worker = response.readEntity(Worker.class);
-                log.info("move");
+
                 String moveUrl = "https://localhost:9000/company/workers/" + id;
-                log.info("move1");
+
                 worker.setOrganization(null);
-                log.info("move1.1");
-                log.info(worker.toString());
+
+
                 client.target(moveUrl)
                         .request(MediaType.APPLICATION_XML)
                         .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
-                log.info("move2");
+
                 return Response.status(Response.Status.OK)
                         .entity(worker)
                         .build();
@@ -104,14 +116,14 @@ public class HrResource {
 
             Client client = createConfiguredClient();
 
-            // URL of the Spring endpoint
+
             String springServiceUrl = "https://localhost:9000/company/workers/" + workerId.toString();
 
-            // Make a GET request and specify Accept header for JSON response
+
             Response response = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)
                     .get();
-            //Organization
+
             String organizationToUrl = "https://localhost:9000/company/organization/" + idTo.toString();
             String organizationFromUrl = "https://localhost:9000/company/organization/" + idFrom.toString();
             Response response1 = client.target(organizationToUrl)
@@ -120,7 +132,7 @@ public class HrResource {
             Response response2 = client.target(organizationFromUrl)
                     .request(MediaType.APPLICATION_XML)
                     .get();
-            // Check the response status
+
             if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                     response1.getStatus() == Response.Status.OK.getStatusCode() &&
                     response2.getStatus() == Response.Status.OK.getStatusCode()) {
