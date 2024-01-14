@@ -9,7 +9,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lombok.extern.slf4j.Slf4j;
+import src.HelloWorld;
 
 import javax.naming.NamingException;
 import javax.net.ssl.SSLContext;
@@ -18,19 +18,21 @@ import java.io.InputStream;
 import java.security.KeyStore;
 
 @Path("/hr")
-@Slf4j
 public class HrResource {
-//    @Inject
-//    private HelloWorld helloWorldEjb;
+
+    HelloWorld helloWorldEjb = JNDIConfig.helloWorldBean();
+
     public HrResource() throws NamingException {
     }
-    // java -jar ../t2/payara-micro-6.2023.11.jar --ssLPort 9090 --deploy server2.war
-//    @GET
-//    @Path("/test")
-//    public void fire() {
-//        System.out.println("test_ejb");
-//        System.out.println(helloWorldEjb.getHelloWorld());
-//    }
+
+    // java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.management/javax.management.openmbean=ALL-UNNAMED -jar ../t2/payara-micro-6.2023.11.jar --ssLPort 9090 --deploy server2.war
+    // java -jar ../t2/payara-micro-5.2022.5.jar --ssLPort 9090 --deploy server2.war
+    @GET
+    @Path("/test")
+    public void fire() {
+        System.out.println("test_ejb");
+        System.out.println(helloWorldEjb.getHelloWorld());
+    }
 
     private Client createConfiguredClient() throws Exception {
         char[] password = "123456".toCharArray();
@@ -54,11 +56,9 @@ public class HrResource {
     @Produces("application/xml")
     public Response fire(@PathParam(value = "id") Integer id){
         try {
-            log.info("client");
             Client client = createConfiguredClient();
 
             String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
-            log.info("before response");
 
             Response response = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)

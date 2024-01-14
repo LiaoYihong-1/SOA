@@ -14,7 +14,7 @@ public class HelloApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
         classes.add(HttpsFilter.class);
-//        classes.add(JNDIConfig.class);
+        classes.add(JNDIConfig.class);
         classes.add(HrResource.class);
         classes.add(DefaultExceptionMapper.class);
         return classes;
