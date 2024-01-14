@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import src.HelloWorld;
+import src.service.operation.OrganizationOperation;
+import src.service.operation.ServiceOperation;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -27,8 +29,13 @@ public class ConfigEjb {
         jndiProps.put(Context.SECURITY_CREDENTIALS, "isomuchLoveSOA3");
         return new InitialContext(jndiProps);
     }
+
     @Bean
-    public HelloWorld serviceOperation(Context context) throws NamingException {
-        return (HelloWorld) context.lookup("ejb:/demo1-1.0-SNAPSHOT/HelloWorldBean!src.HelloWorld");
+    public OrganizationOperation organizationOperationOperation(Context context) throws NamingException {
+        return (OrganizationOperation) context.lookup("ejb:/demo1-1.0-SNAPSHOT/OrganizationService!src.service.operation.OrganizationOperation");
+    }
+    @Bean
+    public ServiceOperation serviceOperation(Context context) throws NamingException {
+        return (ServiceOperation) context.lookup("ejb:/demo1-1.0-SNAPSHOT/WorkerService!src.service.operation.ServiceOperation");
     }
 }

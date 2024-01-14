@@ -13,16 +13,11 @@ import java.util.List;
 @Remote
 public interface ServiceOperation {
     WorkerFullInfo createWorker(CreateWorkerRequest t);
-
     Page<?> getList(List<String> sort, List<String> filters, Boolean isUpper, Integer pageSize, Integer pageNum);
-
     Response delete(Integer id);
-
     WorkerFullInfo updateWorker(WorkerInfo t, Integer id);
-
     NumberOfWorkers getAmountByEndDate(String endDate, String condition) throws InvalidParameterException;
-
     WorkerFullInfo getByMaxSalary();
-
     WorkerFullInfo getById(Integer id);
+    String hello();
 }

@@ -5,18 +5,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
-import org.springframework.data.domain.Pageable;
 import src.dao.model.Worker;
-import jakarta.persistence.criteria.*;
-import src.dao.repository.utils.RequestSpecification;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
-public class WorkerRepository {
+public class WorkerRepository implements WorkerRepI {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -35,32 +31,32 @@ public class WorkerRepository {
         Worker worker = entityManager.find(Worker.class, id);
         return worker != null;
     }
-    public List<Worker> findAll(RequestSpecification specification, Pageable pageable) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Worker> criteriaQuery = criteriaBuilder.createQuery(Worker.class);
-        Root<Worker> root = criteriaQuery.from(Worker.class);
-
-        criteriaQuery.where(specification.toPredicate(root, criteriaQuery, criteriaBuilder));
-        // Apply sorting if available
-        if (pageable.getSort() != null) {
-            criteriaQuery.orderBy(
-                    (Order) pageable.getSort().stream()
-                            .map(order -> order.isAscending() ?
-                                    criteriaBuilder.asc(root.get(order.getProperty())) :
-                                    criteriaBuilder.desc(root.get(order.getProperty())))
-                            .toArray(javax.persistence.criteria.Order[]::new)
-            );
-        }
-
-        TypedQuery<Worker> query = entityManager.createQuery(criteriaQuery);
-
-
-        if (pageable.isPaged()) {
-            query.setFirstResult((int) pageable.getOffset());
-            query.setMaxResults(pageable.getPageSize());
-        }
-        return entityManager.createQuery(criteriaQuery).getResultList();
-    }
+//    public List<Worker> findAll(RequestSpecification specification, Pageable pageable) {
+//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<Worker> criteriaQuery = criteriaBuilder.createQuery(Worker.class);
+//        Root<Worker> root = criteriaQuery.from(Worker.class);
+//
+//        criteriaQuery.where(specification.toPredicate(root, criteriaQuery, criteriaBuilder));
+//
+//        if (pageable.getSort() != null) {
+//            criteriaQuery.orderBy(
+//                    pageable.getSort().stream()
+//                            .map(order -> order.isAscending() ?
+//                                    criteriaBuilder.asc(root.get(order.getProperty())) :
+//                                    criteriaBuilder.desc(root.get(order.getProperty())))
+//                            .toArray(jakarta.persistence.criteria.Order[]::new)
+//            );
+//        }
+//
+//        TypedQuery<Worker> query = entityManager.createQuery(criteriaQuery);
+//
+//
+//        if (pageable.isPaged()) {
+//            query.setFirstResult((int) pageable.getOffset());
+//            query.setMaxResults(pageable.getPageSize());
+//        }
+//        return entityManager.createQuery(criteriaQuery).getResultList();
+//    }
     public Optional<Worker> findById(Integer id) {
         Worker worker = entityManager.find(Worker.class, id);
         return Optional.ofNullable(worker);

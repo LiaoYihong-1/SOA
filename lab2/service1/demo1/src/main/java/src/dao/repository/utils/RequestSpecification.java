@@ -6,7 +6,6 @@ import src.dao.model.Worker;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(staticName = "of")
 @Slf4j
-public class RequestSpecification implements Specification<Worker> {
+public class RequestSpecification {
 
     private final List<String> filter;
     public Predicate toPredicate(Root<Worker> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
