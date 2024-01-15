@@ -8,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.ejb3.annotation.Pool;
 import src.dao.model.*;
 import src.dao.model.Enum.Position;
 import src.dao.repository.OrganizationRepI;
@@ -31,6 +32,7 @@ import java.util.Objects;
 
 @Stateless
 @Slf4j
+@Pool(value = "i-hate-ejb")
 public class WorkerService implements ServiceOperation {
     @PersistenceContext
     private EntityManager entityManager;
@@ -94,6 +96,7 @@ public class WorkerService implements ServiceOperation {
         log.info("start");
         Worker worker = mapWorkerInfoToWorker(requestWorker);
         worker.setId(id);
+
         worker = workerRepository.saveAndFlush(worker);
         log.info("save");
         return mapWorkerToWorkerFullInfo(worker);

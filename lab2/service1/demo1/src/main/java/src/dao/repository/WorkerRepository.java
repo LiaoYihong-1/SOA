@@ -3,8 +3,10 @@ package src.dao.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import src.dao.model.Enum.Position;
 import src.dao.model.Worker;
 
 import java.time.LocalDate;
@@ -16,11 +18,26 @@ public class WorkerRepository implements WorkerRepI {
 
     @PersistenceContext
     private EntityManager entityManager;
-    public Worker saveAndFlush(Worker worker) {
-        entityManager.persist(worker);
-        entityManager.flush();
-
-        return worker;
+    public Worker saveAndFlush(Worker updatedWorker) {
+        try {
+            Worker existingWorker = entityManager.find(Worker.class, updatedWorker.getId());
+            if (existingWorker != null) {
+                existingWorker.setName(updatedWorker.getName());
+                existingWorker.setCoordinate(updatedWorker.getCoordinate());
+                existingWorker.setCreationDate(updatedWorker.getCreationDate());
+                existingWorker.setSalary(updatedWorker.getSalary());
+                existingWorker.setStartDate(updatedWorker.getStartDate());
+                existingWorker.setEndDate(updatedWorker.getEndDate());
+                existingWorker.setPosition(Position.valueOf(updatedWorker.getPosition().toUpperCase()));
+                existingWorker.setOrganization(updatedWorker.getOrganization());
+                entityManager.merge(existingWorker);
+            } else {
+                System.out.println("Worker with ID {} not found."+ updatedWorker.getId());
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating Worker with ID {}: {}"+ updatedWorker.getId() + e.getMessage());
+        }
+        return updatedWorker;
     }
     public void delete(Integer id) {
         Worker worker = entityManager.find(Worker.class, id);

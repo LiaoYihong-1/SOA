@@ -8,6 +8,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.ejb3.annotation.Pool;
 import src.model.Organization;
 import src.model.Worker;
 import src.model.WorkerInfo;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 
 @Stateless
+@Pool(value = "i-hate-ejb")
 public class HelloWorldBean implements HelloWorld {
     @Override
     public String getHelloWorld() {

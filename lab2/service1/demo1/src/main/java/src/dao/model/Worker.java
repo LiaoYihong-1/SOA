@@ -1,14 +1,16 @@
 package src.dao.model;
 
-import src.dao.model.Enum.Position;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
+import src.dao.model.Enum.Position;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -17,9 +19,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "worker")
 @JacksonXmlRootElement(localName = "WorkerFullInfo")
@@ -51,15 +55,14 @@ public class Worker implements Serializable {
     @NotNull
     private ZonedDateTime creationDate;
 
-
     @JacksonXmlProperty(localName = "salary")
-    @Column(name = "salary", nullable = false,scale = 2)
+    @Column(name = "salary", nullable = false, scale = 2)
     @NotNull
-    @Digits(integer = Integer.MAX_VALUE , fraction = 2)
+    @Digits(integer = Integer.MAX_VALUE, fraction = 2)
     private double salary;
 
     @JacksonXmlProperty(localName = "startDate")
-    @Column(name = "start_date",nullable = false)
+    @Column(name = "start_date", nullable = false)
     @NotNull
     private LocalDateTime startDate;
 
@@ -72,9 +75,10 @@ public class Worker implements Serializable {
     @Column(name = "position", nullable = false)
     @NotNull
     private String position;
+
     public String getPosition() {
         try {
-            Position tmp = Position.valueOf(position);
+            Position tmp = Position.valueOf(this.position);
             if (Arrays.asList(Position.values()).contains(tmp)) {
                 return tmp.getValue();
             } else {
@@ -86,15 +90,35 @@ public class Worker implements Serializable {
     }
 
     public void setPosition(Position position) {
-            if (Arrays.asList(Position.values()).contains(position)) {
-                this.position = position.getValue();
-            } else {
-                throw new IllegalArgumentException("");
-            }
+        if (Arrays.asList(Position.values()).contains(position)) {
+            this.position = position.getValue();
+        } else {
+            throw new IllegalArgumentException("");
+        }
     }
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
     @JacksonXmlProperty(localName = "Organization")
     private Organization organization;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Worker worker = (Worker) o;
+        return getId() != null && Objects.equals(getId(), worker.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    public String toString() {
+        return "Worker(id=" + this.getId() + ", name=" + this.getName() + ", coordinate=" + this.getCoordinate() + ", creationDate=" + this.getCreationDate() + ", salary=" + this.getSalary() + ", startDate=" + this.getStartDate() + ", endDate=" + this.getEndDate() + ", position=" + this.getPosition() + ", organization=" + this.getOrganization() + ")";
+    }
 }
