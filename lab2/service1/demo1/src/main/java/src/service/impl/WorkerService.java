@@ -82,6 +82,7 @@ public class WorkerService implements ServiceOperation {
     @Override
     public  WorkerFullInfo updateWorker(WorkerInfo requestWorker, Integer id) {
         log.info("updateWorker");
+        log.info(requestWorker.toString());
         if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
         if (requestWorker.getOrganization() != null)
             if (requestWorker.getOrganization().getId() != null)
@@ -279,20 +280,21 @@ public class WorkerService implements ServiceOperation {
         return worker;
     }
     private Worker mapWorkerInfoToWorker(WorkerInfo workerInfo) {
+        log.info("mapWorkerInfoToWorker");
         Worker worker = new Worker();
         worker.setName(workerInfo.getName());
         worker.setCoordinate(workerInfo.getCoordinate());
-
-        LocalDateTime localDateTime = workerInfo.getStartDate().atStartOfDay();
-        ZoneId zoneId = ZoneId.of("Europe/Moscow");
-        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
-        worker.setCreationDate(zonedDateTime);
-
+        log.info("1");
+        worker.setCreationDate(workerInfo.getCreationDate());
+        log.info("2");
         worker.setSalary(workerInfo.getSalary());
         worker.setStartDate(workerInfo.getStartDate().atStartOfDay());
         worker.setEndDate(workerInfo.getEndDate());
+        log.info("3");
         worker.setPosition(Position.valueOf(workerInfo.getPosition().toUpperCase()));
-        worker.setOrganization(workerInfo.getOrganization());
+        if (workerInfo.getOrganization() != null)
+            worker.setOrganization(workerInfo.getOrganization());
+        log.info("4");
         return worker;
     }
     private WorkerInfo mapWorkerToWorkerInfo(Worker worker) {

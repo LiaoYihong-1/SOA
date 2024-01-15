@@ -1,12 +1,7 @@
 package com.example.server2;
 
 
-
-
-
-
 import src.HelloWorld;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -28,7 +23,7 @@ public class JNDIConfig {
         jndiProps.put(Context.SECURITY_CREDENTIALS, "isomuchLoveSOA3");
         try {
             final Context context = new InitialContext(jndiProps);
-            return  (HelloWorld) context.lookup("ejb:/demo1-1.0-SNAPSHOT/HelloWorldBean!src.HelloWorld");
+            return  (HelloWorld) context.lookup("ejb:/demo2-1.0-SNAPSHOT/HelloWorldBean!src.HelloWorld");
         } catch (NamingException e){
             e.printStackTrace();
         }

@@ -8,7 +8,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
+import src.HelloWorld;
 
 
 import javax.naming.NamingException;
@@ -54,49 +54,52 @@ public class HrResource {
     @DELETE
     @Path("/fire/{id}")
     @Produces("application/xml")
-    public Response fire(@PathParam(value = "id") Integer id){
+    public Response fire(@PathParam(value = "id") Integer id) {
         try {
-            Client client = createConfiguredClient();
-
-            String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
-
-            Response response = client.target(springServiceUrl)
-                    .request(MediaType.APPLICATION_XML)
-                    .get();
-
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-
-                Worker worker = response.readEntity(Worker.class);
-
-                String moveUrl = "https://localhost:9000/company/workers/" + id;
-
-                worker.setOrganization(null);
-
-
-                client.target(moveUrl)
-                        .request(MediaType.APPLICATION_XML)
-                        .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
-
-                return Response.status(Response.Status.OK)
-                        .entity(worker)
-                        .build();
-            } else {
-                Error e1 = new Error();
-                e1.setMessage("Invalid request");
-                e1.setCode(400);
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(e1)
-                        .build();
-            }
-        }catch (NotFoundException notFoundException){
+//            Client client = createConfiguredClient();
+//
+//            String springServiceUrl = "https://localhost:9000/company/workers/" + id.toString();
+//
+//            Response response = client.target(springServiceUrl)
+//                    .request(MediaType.APPLICATION_XML)
+//                    .get();
+//
+//            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+//
+//                Worker worker = response.readEntity(Worker.class);
+//
+//                String moveUrl = "https://localhost:9000/company/workers/" + id;
+//
+//                worker.setOrganization(null);
+//
+//
+//                client.target(moveUrl)
+//                        .request(MediaType.APPLICATION_XML)
+//                        .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
+//
+//                return Response.status(Response.Status.OK)
+//                        .entity(worker)
+//                        .build();
+            helloWorldEjb.fireWorker(id);
+            return Response.status(Response.Status.OK)
+                    .entity("Worker fired successfully")
+                    .build();
+//            } else {
+//                Error e1 = new Error();
+//                e1.setMessage("Invalid request");
+//                e1.setCode(400);
+//                return Response.status(Response.Status.BAD_REQUEST)
+//                        .entity(e1)
+//                        .build();
+//            }
+        } catch (NotFoundException notFoundException) {
             Error e2 = new Error();
             e2.setCode(400);
             e2.setMessage("Invalid request");
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e2)
                     .build();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Error e2 = new Error();
             e2.setCode(500);
             e2.setMessage("Internal server error");
@@ -111,7 +114,7 @@ public class HrResource {
     @Produces("application/xml")
     public Response move(@PathParam(value = "worker-id") Integer workerId,
                          @PathParam(value = "id-from") Integer idFrom,
-                         @PathParam(value = "id-to") Integer idTo){
+                         @PathParam(value = "id-to") Integer idTo) {
         try {
 
             Client client = createConfiguredClient();
@@ -140,7 +143,7 @@ public class HrResource {
                 System.out.println(worker.getStartDate());
                 Organization organizationTo = response1.readEntity(Organization.class);
                 Organization organizationFrom = response2.readEntity(Organization.class);
-                if(!organizationFrom.getId().equals(worker.getOrganization().getId())){
+                if (!organizationFrom.getId().equals(worker.getOrganization().getId())) {
                     Error e = new Error();
                     e.setMessage("Invalid request");
                     e.setCode(400);
@@ -164,15 +167,14 @@ public class HrResource {
                         .entity(e1)
                         .build();
             }
-        }catch (NotFoundException notFoundException){
+        } catch (NotFoundException notFoundException) {
             Error e2 = new Error();
             e2.setCode(400);
             e2.setMessage("Invalid request");
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e2)
                     .build();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Error e2 = new Error();
             e2.setCode(500);
             e2.setMessage("Internal server error");

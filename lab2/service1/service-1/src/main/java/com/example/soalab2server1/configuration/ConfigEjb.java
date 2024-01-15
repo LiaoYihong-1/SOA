@@ -3,7 +3,6 @@ package com.example.soalab2server1.configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import src.HelloWorld;
 import src.service.operation.OrganizationOperation;
 import src.service.operation.ServiceOperation;
 

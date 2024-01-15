@@ -19,6 +19,7 @@ public class WorkerRepository implements WorkerRepI {
     public Worker saveAndFlush(Worker worker) {
         entityManager.persist(worker);
         entityManager.flush();
+
         return worker;
     }
     public void delete(Integer id) {

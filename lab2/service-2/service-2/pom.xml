@@ -58,63 +58,114 @@
             <artifactId>wildfly-ejb-client-bom</artifactId>
             <version>30.0.1.Final</version>
             <type>pom</type>
-            <scope>compile</scope>
+            <scope>import</scope>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>10.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ejb3</groupId>
-            <artifactId>jboss-ejb3-ext-api</artifactId>
-            <version>2.3.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.ejb</groupId>
-            <artifactId>jakarta.ejb-api</artifactId>
-            <version>4.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.reactivestreams</groupId>
-            <artifactId>reactive-streams</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly</groupId>
-            <artifactId>wildfly-naming-client</artifactId>
-            <version>1.0.13.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>javax.servlet</groupId>-->
+<!--            <artifactId>javax.servlet-api</artifactId>-->
+<!--            <version>4.0.1</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>jakarta.platform</groupId>-->
+<!--            <artifactId>jakarta.jakartaee-web-api</artifactId>-->
+<!--            <version>10.0.0</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish.jaxb</groupId>-->
+<!--            <artifactId>jaxb-runtime</artifactId>-->
+<!--            <version>4.0.2</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.jboss.ejb3</groupId>-->
+<!--            <artifactId>jboss-ejb3-ext-api</artifactId>-->
+<!--            <version>2.3.0.Final</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>jakarta.ejb</groupId>-->
+<!--            <artifactId>jakarta.ejb-api</artifactId>-->
+<!--            <version>4.0.1</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.reactivestreams</groupId>-->
+<!--            <artifactId>reactive-streams</artifactId>-->
+<!--            <version>1.0.4</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.wildfly</groupId>-->
+<!--            <artifactId>wildfly-naming-client</artifactId>-->
+<!--            <version>1.0.13.Final</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>javax.enterprise</groupId>-->
+<!--            <artifactId>cdi-api</artifactId>-->
+<!--            <version>2.0</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish.main.deployment</groupId>-->
+<!--            <artifactId>deployment-client</artifactId>-->
+<!--            <version>5.0</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>fish.payara.extras</groupId>
             <artifactId>ejb-http-client</artifactId>
             <version>6.2023.11</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>fish.payara.api</groupId>-->
+<!--            <artifactId>payara-api</artifactId>-->
+<!--            <version>6.2023.9</version>-->
+<!--            <scope>import</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>fish.payara.extras</groupId>-->
+<!--            <artifactId>payara-micro</artifactId>-->
+<!--            <version>6.2023.11</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>demo2</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.34</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>2.34</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.34</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.34</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>3.6.3.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
