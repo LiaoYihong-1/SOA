@@ -11,7 +11,7 @@
     <version>1.0</version>
 
     <modules>
-        <module>demo1</module>
+        <module>demo2</module>
         <module>service-2</module>
     </modules>
 

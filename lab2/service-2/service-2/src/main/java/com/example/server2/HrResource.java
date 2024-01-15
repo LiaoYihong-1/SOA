@@ -2,14 +2,14 @@ package com.example.server2;
 
 import com.example.server2.model.*;
 import com.example.server2.model.Error;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import src.HelloWorld;
+
+
 
 import javax.naming.NamingException;
 import javax.net.ssl.SSLContext;

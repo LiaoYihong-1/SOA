@@ -1,7 +1,6 @@
 package com.example.server2.model;
 
 import com.example.server2.adapter.LocalDateAdapter;
-import com.example.server2.adapter.LocalDateTimeAdapter;
 import com.example.server2.adapter.ZonedDateTimeAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
