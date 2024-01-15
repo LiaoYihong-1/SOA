@@ -12,12 +12,15 @@ import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 
-@Data @RequiredArgsConstructor @AllArgsConstructor
+@Data
+@RequiredArgsConstructor
+@AllArgsConstructor
 @JacksonXmlRootElement(localName = "CreateWorkerRequest")
-public class CreateWorkerRequest {
+public class CreateWorkerRequest implements Serializable {
 
     @JacksonXmlProperty(localName = "name")
     @NotBlank

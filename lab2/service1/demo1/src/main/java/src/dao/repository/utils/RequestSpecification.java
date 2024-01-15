@@ -51,7 +51,6 @@ public class RequestSpecification {
             return buildPredicate(path, field, operator, value, criteriaBuilder);
         }
     }
-
     private Predicate buildStringPredicate(
             Path<?> path,
             String operator,
@@ -70,8 +69,6 @@ public class RequestSpecification {
             default -> null;
         };
     }
-
-
     private Predicate buildPredicate(
             Path<?> path,
             String field,

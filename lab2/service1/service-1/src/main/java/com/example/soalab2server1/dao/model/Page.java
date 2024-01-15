@@ -28,18 +28,4 @@ public class Page<T> {
     private int totalPages;
     private long totalElements;
     private boolean hasContent;
-    public static <T> Page<T> of(org.springframework.data.domain.Page<T> page) {
-        return Page.<T>builder()
-                .pagenumber(page.getNumber())
-                .numberOfElements(page.getNumberOfElements())
-                .first(page.isFirst())
-                .last(page.isLast())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .hasContent(page.hasContent())
-                .content(page.getContent())
-                .build();
-    }
 }

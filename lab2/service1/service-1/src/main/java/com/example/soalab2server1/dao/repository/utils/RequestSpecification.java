@@ -1,9 +1,7 @@
 package com.example.soalab2server1.dao.repository.utils;
 
-import com.example.soalab2server1.dao.model.Enum.Position;
 import com.example.soalab2server1.dao.model.Organization;
 import com.example.soalab2server1.dao.model.Worker;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,11 +11,19 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor(staticName = "of")
 @Slf4j
 public class RequestSpecification implements Specification<Worker> {
 
     private final List<String> filter;
+
+    private RequestSpecification(List<String> filter) {
+        this.filter = filter;
+    }
+
+    public static RequestSpecification of(List<String> filter) {
+        return new RequestSpecification(filter);
+    }
+
     public Predicate toPredicate(Root<Worker> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = Optional.ofNullable(filter)
                 .map(f -> f.stream()
@@ -28,6 +34,7 @@ public class RequestSpecification implements Specification<Worker> {
         log.info("criteriaBuilder");
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
+
     private Predicate processFilter(String filter, Root<Worker> root, CriteriaBuilder criteriaBuilder) {
         String[] parts = filter.split("\\[|\\]");
         String field = parts[0];
@@ -46,7 +53,7 @@ public class RequestSpecification implements Specification<Worker> {
             log.info("Value type: {}", value.getClass());
             Predicate p = buildStringPredicate(path, operator, value, criteriaBuilder);
             log.info("success");
-            return  p;
+            return p;
         } else {
             log.info("buildPredicate");
             return buildPredicate(path, field, operator, value, criteriaBuilder);

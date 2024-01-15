@@ -1,7 +1,6 @@
 package src.service.operation;
 
 import jakarta.ejb.Remote;
-import jakarta.ws.rs.core.Response;
 import src.dao.model.NumberOfWorkers;
 import src.dao.model.Page;
 import src.dao.model.WorkerFullInfo;
@@ -14,7 +13,7 @@ import java.util.List;
 public interface ServiceOperation {
     WorkerFullInfo createWorker(CreateWorkerRequest t);
     Page<?> getList(List<String> sort, List<String> filters, Boolean isUpper, Integer pageSize, Integer pageNum);
-    Response delete(Integer id);
+    void delete(Integer id);
     WorkerFullInfo updateWorker(WorkerInfo t, Integer id);
     NumberOfWorkers getAmountByEndDate(String endDate, String condition) throws InvalidParameterException;
     WorkerFullInfo getByMaxSalary();

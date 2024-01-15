@@ -7,13 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 @JacksonXmlRootElement(localName = "WorkerFullInfo")
-public class WorkerFullInfo {
+public class WorkerFullInfo implements Serializable {
 
     private Integer id;
 

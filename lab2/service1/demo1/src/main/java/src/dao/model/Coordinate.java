@@ -9,12 +9,13 @@ import jakarta.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Embeddable
 @Data
 @NoArgsConstructor
 @JacksonXmlRootElement(localName = "Coordinate")
-public class Coordinate {
+public class Coordinate implements Serializable {
     @Column(name = "coordinates_x")
     @JacksonXmlProperty(localName = "x")
     @NotNull

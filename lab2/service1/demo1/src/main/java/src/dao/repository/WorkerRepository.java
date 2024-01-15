@@ -77,8 +77,8 @@ public class WorkerRepository implements WorkerRepI {
                 "SELECT COUNT(*) FROM worker WHERE end_date > :endDate"
         );
         query.setParameter("endDate", endDate);
-        List<Integer> result = query.getResultList();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        List<Long> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0).intValue());
     }
 
     @SuppressWarnings("unchecked")
@@ -87,8 +87,8 @@ public class WorkerRepository implements WorkerRepI {
                 "SELECT COUNT(*) FROM worker WHERE end_date = :endDate"
         );
         query.setParameter("endDate", endDate);
-        List<Integer> result = query.getResultList();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        List<Long> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0).intValue());
     }
 
     public Optional<Worker> findWorkerByMaxSalary() {

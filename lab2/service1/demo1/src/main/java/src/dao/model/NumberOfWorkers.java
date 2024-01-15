@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @Data
 @JacksonXmlRootElement(localName = "NumberOfWorkers")
 @AllArgsConstructor
-public class NumberOfWorkers {
+public class NumberOfWorkers implements Serializable {
         private Integer number;
 }

@@ -3,11 +3,9 @@ package src.dao.model;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @JacksonXmlRootElement(localName = "SortedWorkersResponse")
@@ -15,7 +13,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Page<T> {
+@ToString
+public class Page<T> implements Serializable {
     @JacksonXmlElementWrapper(localName = "content")
     @JacksonXmlProperty(localName = "WorkerFullInfo")
     private List<T> content;
@@ -28,18 +27,4 @@ public class Page<T> {
     private int totalPages;
     private long totalElements;
     private boolean hasContent;
-    public static <T> Page<T> of(org.springframework.data.domain.Page<T> page) {
-        return Page.<T>builder()
-                .pagenumber(page.getNumber())
-                .numberOfElements(page.getNumberOfElements())
-                .first(page.isFirst())
-                .last(page.isLast())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .hasContent(page.hasContent())
-                .content(page.getContent())
-                .build();
-    }
 }

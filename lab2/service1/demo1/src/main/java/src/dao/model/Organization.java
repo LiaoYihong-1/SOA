@@ -10,13 +10,14 @@ import jakarta.persistence.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Table(name = "organization")
 @Data
 @Entity
 @NoArgsConstructor
 @JacksonXmlRootElement(localName = "Organization")
-public class Organization {
+public class Organization implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
