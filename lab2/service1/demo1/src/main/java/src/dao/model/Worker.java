@@ -82,10 +82,11 @@ public class Worker implements Serializable {
             if (Arrays.asList(Position.values()).contains(tmp)) {
                 return tmp.getValue();
             } else {
-                throw new IllegalArgumentException("");
+                throw new IllegalArgumentException("getPosition1");
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("");
+            e.printStackTrace();
+            throw new IllegalArgumentException("getPosition2");
         }
     }
 
@@ -93,10 +94,16 @@ public class Worker implements Serializable {
         if (Arrays.asList(Position.values()).contains(position)) {
             this.position = position.getValue();
         } else {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("setPosition");
         }
     }
-
+    public void setPosition(String position) {
+        if (Arrays.asList(Position.values()).contains(Position.valueOf(position))) {
+            this.position = position;
+        } else {
+            throw new IllegalArgumentException("setPosition");
+        }
+    }
     @ManyToOne
     @JoinColumn(name = "organization_id")
     @JacksonXmlProperty(localName = "Organization")

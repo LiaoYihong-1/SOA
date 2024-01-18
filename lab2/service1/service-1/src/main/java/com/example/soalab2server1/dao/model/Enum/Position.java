@@ -1,5 +1,8 @@
 package com.example.soalab2server1.dao.model.Enum;
 
+import lombok.Getter;
+
+@Getter
 public enum Position {
             MANAGER("MANAGER"),
             HUMAN_RESOURCES("HUMAN_RESOURCES"),
@@ -11,7 +14,4 @@ public enum Position {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

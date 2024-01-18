@@ -44,7 +44,7 @@ public class WorkerInfo {
     private LocalDate endDate;
 
     @XmlElement(name = "position")
-    private Position position;
+    private String position;
 
     @XmlElement(name="Organization")
     private Organization organization;

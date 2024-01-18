@@ -1,5 +1,6 @@
 package com.example.soalab2server1.controller;
 
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -19,19 +20,15 @@ import src.service.operation.ServiceOperation;
 public class OrganizationController {
 
     private final OrganizationOperation organizationOperationOperation;
-    private final ServiceOperation serviceOperation;
 
     @GetMapping(value = "/company/organization/{id}", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> getOrganization(@PathVariable Integer id) {
-
-        // todo
-        //      return organizationOperationOperation.getOrgan(id);
-        return null;
+        return ResponseEntity.ok(organizationOperationOperation.getOrgan(id));
     }
 
     @GetMapping(value = "/company/organization", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> getOrganization() {
-        log.info(serviceOperation.hello());
+        //test
         return null;
     }
 

@@ -11,14 +11,16 @@ import lombok.NoArgsConstructor;
 import src.adapter.LocalDateAdapter;
 import src.adapter.LocalDateTimeAdapter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Data
 @NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "WorkerFullInfo")
-public class Worker {
+public class Worker implements Serializable {
     @XmlElement(name = "id")
     private Integer id;
 
@@ -44,9 +46,28 @@ public class Worker {
     private LocalDate endDate;
 
     @XmlElement(name = "position")
-    private Position position;
+    private String position;
 
     @XmlElement(name="Organization")
     private Organization organization;
+    public String getPosition() {
+        try {
+            Position tmp = Position.valueOf(position);
+            if (Arrays.asList(Position.values()).contains(tmp)) {
+                return tmp.getValue();
+            } else {
+                throw new IllegalArgumentException("");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("");
+        }
+    }
 
+    public void setPosition(Position position) {
+        if (Arrays.asList(Position.values()).contains(position)) {
+            this.position = position.getValue();
+        } else {
+            throw new IllegalArgumentException("");
+        }
+    }
 }

@@ -14,7 +14,8 @@ public class OrganizationRepository implements OrganizationRepI  {
     private EntityManager entityManager;
 
     public Optional<Organization> findById(Integer id) {
-        Organization organization =  entityManager.find(Organization.class, id);
+        System.out.println("findById");
+        Organization organization = entityManager.find(Organization.class, id);
         return Optional.ofNullable(organization);
     }
     public boolean existsById(Integer id) {

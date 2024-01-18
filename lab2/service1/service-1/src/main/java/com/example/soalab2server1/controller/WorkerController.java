@@ -26,6 +26,11 @@ public class WorkerController {
 
     private final ServiceOperation workerService;
 
+    @GetMapping(value = "/company/health", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<?> healthcheck() {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE)
     public WorkerFullInfo addWorker(@RequestBody CreateWorkerRequest worker) {
         return workerService.createWorker(worker);
@@ -33,7 +38,9 @@ public class WorkerController {
 
     @GetMapping(value = "/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE)
     public WorkerFullInfo getWorker(@PathVariable @Min(0) Integer id) {
-        return workerService.getById(id);
+        WorkerFullInfo w =  workerService.getById(id);
+        log.info(w.toString());
+        return w;
     }
 
     @DeleteMapping(value = "/company/workers/{id}", produces = MediaType.APPLICATION_XML_VALUE)

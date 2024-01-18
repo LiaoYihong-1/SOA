@@ -17,8 +17,9 @@ public class OrganizationService implements OrganizationOperation {
     @Inject
     private OrganizationRepI organizationRepository;
     @Override
-    public Response getOrgan(Integer id) {
+    public Organization getOrgan(Integer id) {
         Organization organization = organizationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
-        return Response.ok(organization).build();
+        System.out.println(organization.toString());
+        return organization;
     }
 }

@@ -42,7 +42,6 @@ public class WorkerService implements ServiceOperation {
     private WorkerRepI workerRepository;
     @Override
     public WorkerFullInfo getById(Integer id) {
-        log.info("getById");
         Worker optionalWorker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
         return mapWorkerToWorkerFullInfo(optionalWorker);
     }
@@ -84,7 +83,6 @@ public class WorkerService implements ServiceOperation {
     @Override
     public  WorkerFullInfo updateWorker(WorkerInfo requestWorker, Integer id) {
         log.info("updateWorker");
-        log.info(requestWorker.toString());
         if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
         if (requestWorker.getOrganization() != null)
             if (requestWorker.getOrganization().getId() != null)
@@ -94,6 +92,7 @@ public class WorkerService implements ServiceOperation {
                 )
                     throw new ResourceNotFoundException("");
         log.info("start");
+        log.info(requestWorker.toString());
         Worker worker = mapWorkerInfoToWorker(requestWorker);
         worker.setId(id);
 
@@ -125,7 +124,6 @@ public class WorkerService implements ServiceOperation {
         CriteriaQuery<Worker> criteriaQuery = criteriaBuilder.createQuery(Worker.class);
         Root<Worker> root = criteriaQuery.from(Worker.class);
 
-        // Apply sorting
         if (sortElements != null && !sortElements.isEmpty()) {
             applySorting(sortElements, isUpper, criteriaBuilder, criteriaQuery, root);
         }
@@ -321,6 +319,7 @@ public class WorkerService implements ServiceOperation {
         workerFullInfo.setSalary((float) worker.getSalary());
         workerFullInfo.setStartDate(worker.getStartDate().toLocalDate());
         workerFullInfo.setEndDate(worker.getEndDate());
+        System.out.println("mapWorkerToWorkerInfo " + worker.getPosition());
         workerFullInfo.setPosition(worker.getPosition());
         workerFullInfo.setOrganization(worker.getOrganization());
         return workerFullInfo;

@@ -31,9 +31,11 @@ public class WorkerFullInfo implements Serializable {
     @JacksonXmlProperty(localName = "salary")
     private float salary;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JacksonXmlProperty(localName = "startDate")
     private LocalDate startDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JacksonXmlProperty(localName = "endDate")
     private LocalDate endDate;
 

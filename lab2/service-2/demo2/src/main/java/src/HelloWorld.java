@@ -8,6 +8,5 @@ import src.model.*;
 public interface HelloWorld {
     String getHelloWorld();
     void fireWorker(Integer workerId);
-    Organization getOrganizationById(Integer organizationId);
-    void updateWorker(Worker worker);
+    Worker move (Integer workerId,Integer idFrom,Integer idTo) throws Exception;
 }

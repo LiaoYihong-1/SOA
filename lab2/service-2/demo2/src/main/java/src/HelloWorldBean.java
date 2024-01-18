@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.ejb3.annotation.Pool;
 import src.model.Organization;
 import src.model.Worker;
+import src.model.Error;
 import src.model.WorkerInfo;
 
 import javax.net.ssl.SSLContext;
@@ -42,6 +43,7 @@ public class HelloWorldBean implements HelloWorld {
 
         return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier((hostname, session) -> true).build();
     }
+
     @Override
     public void fireWorker(Integer id) {
         try {
@@ -53,12 +55,14 @@ public class HelloWorldBean implements HelloWorld {
             Response response = client.target(springServiceUrl)
                     .request(MediaType.APPLICATION_XML)
                     .get();
-
+            System.out.println("[INFO] client.target(springServiceUrl)");
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                System.out.println("[INFO] response.getStatus()");
 
                 Worker worker = response.readEntity(Worker.class);
 
                 String moveUrl = "https://localhost:9999/company/workers/" + id;
+                System.out.println("[INFO] moveUrl");
 
                 worker.setOrganization(null);
 
@@ -69,21 +73,52 @@ public class HelloWorldBean implements HelloWorld {
             } else {
                 throw new BusinessException("Invalid request");
             }
-        }catch (NotFoundException notFoundException){
+        } catch (NotFoundException notFoundException) {
             throw new BusinessException("Invalid request");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new BusinessException("Internal server error");
         }
     }
 
     @Override
-    public Organization getOrganizationById(Integer organizationId) {
+    public Worker move(Integer workerId, Integer idFrom, Integer idTo) throws Exception {
+        Client client = createConfiguredClient();
+        String springServiceUrl = "https://localhost:9999/company/workers/" + workerId.toString();
+
+
+        Response response = client.target(springServiceUrl)
+                .request(MediaType.APPLICATION_XML)
+                .get();
+
+        String organizationToUrl = "https://localhost:9999/company/organization/" + idTo.toString();
+        String organizationFromUrl = "https://localhost:9999/company/organization/" + idFrom.toString();
+        Response response1 = client.target(organizationToUrl)
+                .request(MediaType.APPLICATION_XML)
+                .get();
+        Response response2 = client.target(organizationFromUrl)
+                .request(MediaType.APPLICATION_XML)
+                .get();
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode() &&
+                response1.getStatus() == Response.Status.OK.getStatusCode() &&
+                response2.getStatus() == Response.Status.OK.getStatusCode()) {
+            Worker worker = response.readEntity(Worker.class);
+            System.out.println(worker.getStartDate());
+            Organization organizationTo = response1.readEntity(Organization.class);
+            Organization organizationFrom = response2.readEntity(Organization.class);
+            if (!organizationFrom.getId().equals(worker.getOrganization().getId())) {
+                Error e = new Error();
+                e.setMessage("Invalid request");
+                e.setCode(400);
+                return null;
+            }
+            String moveUrl = "https://localhost:9000/company/workers/" + workerId;
+            worker.setOrganization(organizationTo);
+            client.target(moveUrl)
+                    .request(MediaType.APPLICATION_XML)
+                    .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
+            return worker;
+        }
         return null;
-    }
-
-    @Override
-    public void updateWorker(Worker worker) {
-
     }
 }
