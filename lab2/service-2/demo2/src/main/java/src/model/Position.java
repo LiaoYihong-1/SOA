@@ -3,8 +3,10 @@ package src.model;
 import jakarta.xml.bind.annotation.XmlEnumValue;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public enum Position {
+public enum Position implements Serializable {
     @XmlEnumValue("MANAGER")
     MANAGER("MANAGER"),
     @XmlEnumValue("DEVELOPER")

@@ -103,7 +103,6 @@ public class HelloWorldBean implements HelloWorld {
                 response1.getStatus() == Response.Status.OK.getStatusCode() &&
                 response2.getStatus() == Response.Status.OK.getStatusCode()) {
             Worker worker = response.readEntity(Worker.class);
-            System.out.println(worker.getStartDate());
             Organization organizationTo = response1.readEntity(Organization.class);
             Organization organizationFrom = response2.readEntity(Organization.class);
             if (!organizationFrom.getId().equals(worker.getOrganization().getId())) {
@@ -112,7 +111,7 @@ public class HelloWorldBean implements HelloWorld {
                 e.setCode(400);
                 return null;
             }
-            String moveUrl = "https://localhost:9000/company/workers/" + workerId;
+            String moveUrl = "https://localhost:9999/company/workers/" + workerId;
             worker.setOrganization(organizationTo);
             client.target(moveUrl)
                     .request(MediaType.APPLICATION_XML)

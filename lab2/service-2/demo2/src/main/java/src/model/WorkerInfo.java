@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import src.adapter.LocalDateAdapter;
 import src.adapter.ZonedDateTimeAdapter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,7 +21,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "WorkerInfo")
-public class WorkerInfo {
+public class WorkerInfo implements Serializable {
 
     @XmlElement(name = "name")
     private String name;

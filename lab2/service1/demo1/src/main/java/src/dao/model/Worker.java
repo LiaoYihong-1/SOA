@@ -85,9 +85,9 @@ public class Worker implements Serializable {
                 throw new IllegalArgumentException("getPosition1");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("getPosition2");
+            System.out.println("IHateEjb");
         }
+        return null;
     }
 
     public void setPosition(Position position) {

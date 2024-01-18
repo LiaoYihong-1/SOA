@@ -6,11 +6,14 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
 @NoArgsConstructor
 @XmlRootElement(name = "Organization")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Data
-public class Organization {
+public class Organization implements Serializable {
     @XmlElement(name="id")
     public Integer id;
     @XmlElement(name="fullName")

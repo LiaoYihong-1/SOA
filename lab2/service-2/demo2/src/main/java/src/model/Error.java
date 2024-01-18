@@ -6,11 +6,13 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
+import java.io.Serializable;
+
 
 @Data
 @XmlRootElement(name = "Error")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Error {
+public class Error implements Serializable {
     @XmlElement
     private String message;
     @XmlElement
