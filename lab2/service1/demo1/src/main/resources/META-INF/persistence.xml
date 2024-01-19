@@ -9,9 +9,9 @@
 
         <properties>
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
-            <property name="hibernate.connection.username" value="postgres"/>
-            <property name="hibernate.connection.password" value="mysecretpassword"/>
-            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5439/postgres"/>
+            <property name="hibernate.connection.username" value="s284699"/>
+            <property name="hibernate.connection.password" value="6hCX6nqHl02zEJAZ"/>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://pg:5432/studs"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>

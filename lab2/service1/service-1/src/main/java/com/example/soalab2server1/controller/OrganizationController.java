@@ -29,7 +29,7 @@ public class OrganizationController {
     @GetMapping(value = "/company/organization", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> getOrganization() {
         //test
-        return null;
+        return ResponseEntity.ok("hah");
     }
 
 }
