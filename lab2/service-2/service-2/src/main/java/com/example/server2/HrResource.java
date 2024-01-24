@@ -55,6 +55,7 @@ public class HrResource {
     @Produces("application/xml")
     public Response fire(@PathParam(value = "id") Integer id) {
         try {
+
             helloWorldEjb.fireWorker(id);
             return Response.status(Response.Status.OK)
                     .entity("Worker fired successfully")
@@ -75,6 +76,14 @@ public class HrResource {
                     .entity(e2)
                     .build();
         } catch (Exception e) {
+            if (e.getMessage().equals("jakarta.ws.rs.NotFoundException: Invalid request")){
+                Error e2 = new Error();
+                e2.setCode(400);
+                e2.setMessage("Invalid request");
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(e2)
+                        .build();
+            }
             Error e2 = new Error();
             e2.setCode(500);
             e2.setMessage("Internal server error");

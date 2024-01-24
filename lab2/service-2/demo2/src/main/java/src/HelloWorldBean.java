@@ -71,11 +71,13 @@ public class HelloWorldBean implements HelloWorld {
                         .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
 
             } else {
-                throw new BusinessException("Invalid request");
+                throw new NotFoundException("Invalid request");
             }
         } catch (NotFoundException notFoundException) {
-            throw new BusinessException("Invalid request");
+            System.out.println("ex1");
+            throw new NotFoundException("Invalid request");
         } catch (Exception e) {
+            System.out.println("ex2");
             throw new BusinessException("Internal server error");
         }
     }
