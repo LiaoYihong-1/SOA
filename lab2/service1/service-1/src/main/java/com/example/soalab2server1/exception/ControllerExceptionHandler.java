@@ -23,7 +23,8 @@ public class ControllerExceptionHandler {
             org.springframework.http.converter.HttpMessageNotReadableException.class,
             org.springframework.web.bind.MethodArgumentNotValidException.class,
             org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
-            src.excep.ResourceNotFoundException.class
+            src.excep.ResourceNotFoundException.class,
+            src.excep.InvalidConditionException.class
     })
     public ResponseEntity<?> handleException(Exception ex, WebRequest request) {
         log.error("Exception occurred {}", ex.getMessage());
@@ -31,7 +32,9 @@ public class ControllerExceptionHandler {
         String errorMessage = "Invalid request";
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
-        if (ex instanceof ResourceNotFoundException || ex.getMessage().equals("src.excep.ResourceNotFoundException: HTTP 404 Not Found") ) {
+        if (ex instanceof ResourceNotFoundException
+                || ex.getMessage().equals("src.excep.ResourceNotFoundException: HTTP 404 Not Found")
+        ) {
             errorMessage = "The specified resource was not found";
             httpStatus = HttpStatus.NOT_FOUND;
         }
