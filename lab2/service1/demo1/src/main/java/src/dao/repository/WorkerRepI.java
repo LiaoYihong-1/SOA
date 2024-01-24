@@ -14,4 +14,5 @@ public interface WorkerRepI {
     boolean existsById(Integer id);
     void delete(Integer id);
     Worker saveAndFlush(Worker worker);
+    Worker create(Worker worker);
 }

@@ -6,7 +6,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.ejb3.annotation.Pool;
 import src.dao.model.*;
@@ -21,11 +20,11 @@ import src.service.operation.ServiceOperation;
 
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +39,7 @@ public class WorkerService implements ServiceOperation {
     private OrganizationRepI organizationRepository;
     @Inject
     private WorkerRepI workerRepository;
+
     @Override
     public WorkerFullInfo getById(Integer id) {
         Worker optionalWorker = workerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
@@ -81,7 +81,7 @@ public class WorkerService implements ServiceOperation {
     }
 
     @Override
-    public  WorkerFullInfo updateWorker(WorkerInfo requestWorker, Integer id) {
+    public WorkerFullInfo updateWorker(WorkerInfo requestWorker, Integer id) {
         log.info("updateWorker");
         if (!workerRepository.existsById(id)) throw new ResourceNotFoundException("");
         if (requestWorker.getOrganization() != null)
@@ -95,11 +95,11 @@ public class WorkerService implements ServiceOperation {
         log.info(requestWorker.toString());
         Worker worker = mapWorkerInfoToWorker(requestWorker);
         worker.setId(id);
-
         worker = workerRepository.saveAndFlush(worker);
         log.info("save");
         return mapWorkerToWorkerFullInfo(worker);
     }
+
     @Override
     public WorkerFullInfo createWorker(CreateWorkerRequest requestWorker) {
         log.info("createWorker");
@@ -113,13 +113,68 @@ public class WorkerService implements ServiceOperation {
 
         Worker worker = mapCreateWorkerRequestToWorker(requestWorker);
         worker.setCreationDate(ZonedDateTime.now().withNano(0));
-        worker = workerRepository.saveAndFlush(worker);
+        worker = workerRepository.create(worker);
         log.info(worker.toString());
         return mapWorkerToWorkerFullInfo(worker);
     }
 
     @Override
     public Page<?> getList(List<String> sortElements, List<String> filters, Boolean isUpper, Integer pageSize, Integer pageNum) {
+        if (sortElements != null) {
+            if (sortElements.isEmpty() || isUpper == null) {
+                throw new InvalidParameterException("");
+            }
+            if (sortElements.size() != sortElements.stream().distinct().count()) {
+                throw new InvalidParameterException("");
+            }
+            sortElements.stream().filter(it -> !it.equals("coordinates.x") && !it.equals("coordinates.y") && !it.equals("organization.id") && !it.equals("organization.fullName") && !it.equals("organization.annualTurnover")).forEach(it -> {
+                if (!isSortableField(Worker.class, it)) {
+                    log.info("!isSortableField(Worker.class, it)");
+                    throw new InvalidParameterException(it);
+                }
+            });
+            sortElements.replaceAll(it -> it.equals("coordinates.x") ? "coordinate.x" : it);
+            sortElements.replaceAll(it -> it.equals("coordinates.y") ? "coordinate.y" : it);
+        }
+        if (filters != null) {
+            if (filters.size() != filters.stream().distinct().count() || filters.isEmpty()) {
+                throw new InvalidParameterException("");
+            }
+            filters.forEach(it -> {
+                try {
+                    String[] parts = it.split("\\[|\\]");
+                    String field = parts[0];
+                    String value = parts[2].split("=")[1];
+                    String operator = parts[1];
+
+                    if (!operator.matches("eq|ne|gt|lt|lte|gte")) throw new InvalidParameterException("");
+                    if ((field.equals("name") || field.equals("position") || field.equals("organization.fullName")) && (!operator.matches("eq|ne|gt|lt")))
+                        throw new InvalidParameterException("");
+
+                    SimpleDateFormat creationdateDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    SimpleDateFormat startdateDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                    if (field.equals("creationdate")) {
+                        Date date = creationdateDateFormat.parse(value);
+                    }
+                    if (field.equals("startdate") || field.equals("enddate")) {
+                        Date date = startdateDateFormat.parse(value);
+                    }
+                    if (field.equals("id") || field.equals("organization.id")) Integer.parseInt(value);
+
+                    if (field.equals("organization.annualTurnover") || field.equals("coordinates.x"))
+                        Long.parseLong(value);
+
+                    if (field.equals("salary")) Float.parseFloat(value);
+
+                    if (field.equals("coordinates.y")) Double.parseDouble(value);
+
+                } catch (Exception ex) {
+                    throw new InvalidParameterException("");
+                }
+            });
+        }
+
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Worker> criteriaQuery = criteriaBuilder.createQuery(Worker.class);
         Root<Worker> root = criteriaQuery.from(Worker.class);
@@ -156,6 +211,7 @@ public class WorkerService implements ServiceOperation {
                 .hasContent(!resultListNew.isEmpty())
                 .build();
     }
+
     private void applySorting(List<String> sortElements, Boolean isUpper, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery, Root<Worker> root) {
         sortElements.forEach(element -> {
             Path<?> path = getPath(root, element);
@@ -164,7 +220,8 @@ public class WorkerService implements ServiceOperation {
             }
         });
     }
-    private void applyFilters(List<String> filters, CriteriaBuilder criteriaBuilder, CriteriaQuery<Worker> criteriaQuery, Root<Worker> root)  {
+
+    private void applyFilters(List<String> filters, CriteriaBuilder criteriaBuilder, CriteriaQuery<Worker> criteriaQuery, Root<Worker> root) {
         List<Predicate> predicates = filters.stream()
                 .map(filter -> processFilter(filter, root, criteriaBuilder))
                 .filter(Objects::nonNull)
@@ -172,6 +229,7 @@ public class WorkerService implements ServiceOperation {
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
     }
+
     private Predicate processFilter(String filter, Root<Worker> root, CriteriaBuilder criteriaBuilder) {
         String[] parts = filter.split("\\[|\\]");
         String field = parts[0];
@@ -190,12 +248,13 @@ public class WorkerService implements ServiceOperation {
             log.info("Value type: {}", value.getClass());
             Predicate p = buildStringPredicate(path, operator, value, criteriaBuilder);
             log.info("success");
-            return  p;
+            return p;
         } else {
             log.info("buildPredicate");
             return buildPredicate(path, field, operator, value, criteriaBuilder);
         }
     }
+
     private Predicate buildStringPredicate(Path<?> path, String operator, String value, CriteriaBuilder criteriaBuilder) {
         return switch (operator) {
             case "eq" -> criteriaBuilder.equal(path, value);
@@ -209,6 +268,7 @@ public class WorkerService implements ServiceOperation {
             default -> null;
         };
     }
+
     private Predicate buildPredicate(Path<?> path, String field, String operator, String value, CriteriaBuilder criteriaBuilder) {
         Object parsedValue = parseValue(value, field);
         return switch (operator) {
@@ -223,6 +283,7 @@ public class WorkerService implements ServiceOperation {
             default -> null;
         };
     }
+
     private Object parseValue(String value, String field) {
         return switch (field) {
             case "creationdate" -> ZonedDateTime.parse(value).minusHours(3);
@@ -234,6 +295,7 @@ public class WorkerService implements ServiceOperation {
             default -> value;
         };
     }
+
     private Path<?> getPath(Root<Worker> root, String field) {
         // todo Worker_.field and etc...(but its like not needed in lab)
         return switch (field) {
@@ -261,6 +323,7 @@ public class WorkerService implements ServiceOperation {
             default -> null;
         };
     }
+
     private boolean isSortableField(Class<?> clazz, String fieldName) {
         try {
             Field field = clazz.getDeclaredField(fieldName);
@@ -269,6 +332,7 @@ public class WorkerService implements ServiceOperation {
             return false;
         }
     }
+
     private Worker mapCreateWorkerRequestToWorker(CreateWorkerRequest createWorkerRequest) {
         Worker worker = new Worker();
         worker.setName(createWorkerRequest.getName());
@@ -280,6 +344,7 @@ public class WorkerService implements ServiceOperation {
         worker.setOrganization(createWorkerRequest.getOrganization());
         return worker;
     }
+
     private Worker mapWorkerInfoToWorker(WorkerInfo workerInfo) {
         log.info("mapWorkerInfoToWorker");
         Worker worker = new Worker();
@@ -298,6 +363,7 @@ public class WorkerService implements ServiceOperation {
         log.info("4");
         return worker;
     }
+
     private WorkerInfo mapWorkerToWorkerInfo(Worker worker) {
         WorkerInfo workerInfo = new WorkerInfo();
         workerInfo.setName(worker.getName());
@@ -310,6 +376,7 @@ public class WorkerService implements ServiceOperation {
         workerInfo.setOrganization(worker.getOrganization());
         return workerInfo;
     }
+
     private WorkerFullInfo mapWorkerToWorkerFullInfo(Worker worker) {
         WorkerFullInfo workerFullInfo = new WorkerFullInfo();
         workerFullInfo.setId(worker.getId());

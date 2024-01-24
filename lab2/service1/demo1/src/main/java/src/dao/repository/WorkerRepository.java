@@ -39,6 +39,13 @@ public class WorkerRepository implements WorkerRepI {
         }
         return updatedWorker;
     }
+
+    @Override
+    public Worker create(Worker worker) {
+        entityManager.persist(worker);
+        return worker;
+    }
+
     public void delete(Integer id) {
         Worker worker = entityManager.find(Worker.class, id);
         if (worker != null) {
