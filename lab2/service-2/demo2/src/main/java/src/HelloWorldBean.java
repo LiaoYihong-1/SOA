@@ -59,8 +59,9 @@ public class HelloWorldBean implements HelloWorld {
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 System.out.println("[INFO] response.getStatus()");
 
-                Worker worker = response.readEntity(Worker.class);
-
+                Worker worker = response.readEntity(Worker.class);;
+                if (worker.getOrganization().getId()==null)
+                    throw new NotFoundException("Invalid request");
                 String moveUrl = "https://localhost:9999/company/workers/" + id;
                 System.out.println("[INFO] moveUrl");
 

@@ -28,7 +28,7 @@ public class WorkerController {
 
     @GetMapping(value = "/company/health", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> healthcheck() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("check");
     }
 
     @PostMapping(value = "/company/workers", produces = MediaType.APPLICATION_XML_VALUE)

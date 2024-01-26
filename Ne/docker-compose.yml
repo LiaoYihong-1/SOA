@@ -1,0 +1,12 @@
+version: "2.1"
+services:
+  haproxy:
+    image: haproxy:2.6.16
+    container_name: haproxy
+    restart: always
+    ports:
+      - "7698:7698"
+      - "8084:8084"
+    volumes:
+      - ./combined.pem:/haproxy.pem
+      - ./hapex.cfg:/usr/local/etc/haproxy/haproxy.cfg

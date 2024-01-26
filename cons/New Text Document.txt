@@ -1,0 +1,4 @@
+consul agent -server -bootstrap-expect=1 -data-dir=consul-data -ui  -bind=192.168.0.102
+consul agent -config-file=consul-config.json -data-dir=consul-data
+
+ipconfig

@@ -57,8 +57,7 @@ public class HrResource {
         try {
 
             helloWorldEjb.fireWorker(id);
-            return Response.status(Response.Status.OK)
-                    .entity("Worker fired successfully")
+            return Response.status(Response.Status.NO_CONTENT)
                     .build();
 //            } else {
 //                Error e1 = new Error();
