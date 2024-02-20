@@ -1,5 +1,6 @@
 package com.example.server2.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 @XmlRootElement(name = "Organization")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Data
+@AllArgsConstructor
 public class Organization {
     @XmlElement(name="id")
     public Integer id;
@@ -18,4 +20,5 @@ public class Organization {
     public String fullName;
     @XmlElement(name="annualTurnover")
     public Long annualTurnover;
+
 }

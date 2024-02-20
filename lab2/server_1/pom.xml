@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>soa-lab2-server1</artifactId>
+	<artifactId>server_1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>soa-lab2-server1</name>
 	<description>soa-lab2-server1</description>

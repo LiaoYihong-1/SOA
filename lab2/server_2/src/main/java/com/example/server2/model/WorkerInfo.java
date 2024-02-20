@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ import java.time.ZonedDateTime;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "WorkerInfo")
 public class WorkerInfo {
@@ -62,10 +64,7 @@ public class WorkerInfo {
         return w;
     }
     public static ZonedDateTime convertLocalTime(LocalDateTime localDateTime){
-        // 指定目标时区（例如：纽约时区）
         ZoneId targetZoneId = ZoneId.of("Europe/Moscow");
-
-        // 将 LocalDateTime 转换为 ZonedDateTime
         ZonedDateTime zonedDateTime = localDateTime.atZone(targetZoneId);
         return zonedDateTime;
     }
