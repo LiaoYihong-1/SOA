@@ -33,22 +33,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class HrResource implements HrRes {
 
-    private Client createConfiguredClient() throws Exception {
-        char[] password = "123456".toCharArray();
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-
-        try (InputStream keystoreInputStream = getClass().getResourceAsStream("../../../keystore.jks")) {
-            keystore.load(keystoreInputStream, password);
-        }
-
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(keystore);
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
-
-        return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier((hostname, session) -> true).build();
-    }
 
     @Override
     public Worker test(@WebParam(name = "id") int id) {
@@ -67,27 +51,15 @@ public class HrResource implements HrRes {
     }
 
     @Override
-    public String fire(@WebParam(name = "id") int id) throws SOAPException {
+    public WorkerInfo fire(@WebParam(name = "worker") Worker worker) throws SOAPException {
         try {
-            Client client = createConfiguredClient();
-
-            String springServiceUrl = "https://localhost:9000/company/workers/" + id;
-            Response response = client.target(springServiceUrl)
-                    .request(MediaType.APPLICATION_XML)
-                    .get();
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                Worker worker = response.readEntity(Worker.class);
-                if (worker.getOrganization().getId() == null)
-                    throw new NotFoundException("Invalid request");
-                String moveUrl = "https://localhost:9000/company/workers/" + id;
-                worker.setOrganization(null);
-                client.target(moveUrl)
-                        .request(MediaType.APPLICATION_XML)
-                        .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
-                return "204";
-            } else {
+            if (worker.getOrganization().getId() == null)
                 throw new NotFoundException("Invalid request");
-            }
+            System.out.println(worker);
+            worker.setOrganization(null);
+
+            return WorkerInfo.ConvertWorker(worker);
+
         } catch (NotFoundException notFoundException) {
             SOAPFactory soapFactory = SOAPFactory.newInstance();
             SOAPFault soapFault = soapFactory.createFault(
@@ -105,13 +77,13 @@ public class HrResource implements HrRes {
 
     @Override
     public WorkerInfo move(@WebParam(name = "worker") Worker worker,
-                       @WebParam(name = "org-from") Organization orgFrom,
-                       @WebParam(name = "org-to") Organization orgTo) throws SOAPException {
+                           @WebParam(name = "org-from") Organization orgFrom,
+                           @WebParam(name = "org-to") Organization orgTo) throws SOAPException {
         try {
 
             if (
                     !orgFrom.getId().equals(worker.getOrganization().getId())
-                    || orgTo.getId().equals(worker.getOrganization().getId())
+                            || orgTo.getId().equals(worker.getOrganization().getId())
             ) {
                 throw new NotFoundException("Invalid request");
             }
