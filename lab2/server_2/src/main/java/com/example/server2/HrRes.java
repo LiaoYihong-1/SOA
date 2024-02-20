@@ -16,7 +16,7 @@ public interface HrRes {
     @WebMethod
     String fire(@WebParam(name = "id") int id) throws SOAPException;
     @WebMethod
-    Worker move(@WebParam(name = "worker") Worker worker,
+    WorkerInfo move(@WebParam(name = "worker") Worker worker,
                          @WebParam(name = "org-from") Organization orgFrom,
                          @WebParam(name = "org-to") Organization orgTo) throws SOAPException;
 }

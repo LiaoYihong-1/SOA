@@ -24,6 +24,9 @@ import java.time.ZonedDateTime;
 @XmlRootElement(name = "WorkerInfo")
 public class WorkerInfo {
 
+    @XmlElement(name = "id")
+    private Integer id;
+
     @XmlElement(name = "name")
     private String name;
 
@@ -53,6 +56,7 @@ public class WorkerInfo {
 
     public static WorkerInfo ConvertWorker(Worker worker){
         WorkerInfo w = new WorkerInfo();
+        w.setId(worker.getId());
         w.setCoordinate(worker.getCoordinate());
         w.setOrganization(worker.getOrganization());
         w.setSalary(worker.getSalary());

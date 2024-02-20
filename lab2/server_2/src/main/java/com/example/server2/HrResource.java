@@ -104,17 +104,21 @@ public class HrResource implements HrRes {
     }
 
     @Override
-    public Worker move(@WebParam(name = "worker") Worker worker,
+    public WorkerInfo move(@WebParam(name = "worker") Worker worker,
                        @WebParam(name = "org-from") Organization orgFrom,
                        @WebParam(name = "org-to") Organization orgTo) throws SOAPException {
         try {
 
-            if (!orgFrom.getId().equals(worker.getOrganization().getId())) {
+            if (
+                    !orgFrom.getId().equals(worker.getOrganization().getId())
+                    || orgTo.getId().equals(worker.getOrganization().getId())
+            ) {
                 throw new NotFoundException("Invalid request");
             }
 
             worker.setOrganization(orgTo);
-            return worker;
+
+            return WorkerInfo.ConvertWorker(worker);
 
         } catch (NotFoundException notFoundException) {
             SOAPFactory soapFactory = SOAPFactory.newInstance();
