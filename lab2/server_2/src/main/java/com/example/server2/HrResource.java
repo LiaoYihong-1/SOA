@@ -56,11 +56,11 @@ public class HrResource implements HrRes {
         Worker w = new Worker();
         w.setId(1);
         w.setName("asdf");
-        w.setCoordinate(new Coordinate(2L,2));
+        w.setCoordinate(new Coordinate(2L, 2));
         w.setCreationDate(LocalDateTime.now());
         w.setSalary(9);
         w.setPosition(Position.COOK);
-        w.setOrganization(new Organization(1,"Google",654654L));
+        w.setOrganization(new Organization(1, "Google", 654654L));
         w.setStartDate(LocalDate.now());
         w.setEndDate(LocalDate.now());
         return w;
@@ -104,58 +104,25 @@ public class HrResource implements HrRes {
     }
 
     @Override
-    public Worker move(@WebParam(name = "worker-id") int workerId,
-                         @WebParam(name = "id-from") int idFrom,
-                         @WebParam(name = "id-to") int idTo) throws SOAPException {
+    public Worker move(@WebParam(name = "worker") Worker worker,
+                       @WebParam(name = "org-from") Organization orgFrom,
+                       @WebParam(name = "org-to") Organization orgTo) throws SOAPException {
         try {
 
-            Client client = createConfiguredClient();
-
-            String springServiceUrl = "https://localhost:9000/company/workers/" + workerId;
-
-            Response response = client.target(springServiceUrl)
-                    .request(MediaType.APPLICATION_XML)
-                    .get();
-
-            String organizationToUrl = "https://localhost:9000/company/organization/" + idTo;
-            String organizationFromUrl = "https://localhost:9000/company/organization/" + idFrom;
-
-            Response response1 = client.target(organizationToUrl)
-                    .request(MediaType.APPLICATION_XML)
-                    .get();
-            Response response2 = client.target(organizationFromUrl)
-                    .request(MediaType.APPLICATION_XML)
-                    .get();
-
-            if (response.getStatus() == Response.Status.OK.getStatusCode() &&
-                    response1.getStatus() == Response.Status.OK.getStatusCode() &&
-                    response2.getStatus() == Response.Status.OK.getStatusCode()) {
-
-                Worker worker = response.readEntity(Worker.class);
-                Organization organizationTo = response1.readEntity(Organization.class);
-                Organization organizationFrom = response2.readEntity(Organization.class);
-
-                if(!organizationFrom.getId().equals(worker.getOrganization().getId())){
-                    throw new NotFoundException("Invalid request");
-                }
-
-                String moveUrl = "https://localhost:9000/company/workers/" + workerId;
-                worker.setOrganization(organizationTo);
-                client.target(moveUrl)
-                        .request(MediaType.APPLICATION_XML)
-                        .put(Entity.entity(WorkerInfo.ConvertWorker(worker), MediaType.APPLICATION_XML));
-                return worker;
-            } else {
+            if (!orgFrom.getId().equals(worker.getOrganization().getId())) {
                 throw new NotFoundException("Invalid request");
             }
-        }catch (NotFoundException notFoundException){
+
+            worker.setOrganization(orgTo);
+            return worker;
+
+        } catch (NotFoundException notFoundException) {
             SOAPFactory soapFactory = SOAPFactory.newInstance();
             SOAPFault soapFault = soapFactory.createFault(
                     "400,Invalid request",
                     new QName("http://schemas.xmlsoap.org/soap/envelope/", "Client"));
             throw new SOAPFaultException(soapFault);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             SOAPFactory soapFactory = SOAPFactory.newInstance();
             SOAPFault soapFault = soapFactory.createFault(
                     "500,Internal server error",
