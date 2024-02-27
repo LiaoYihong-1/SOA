@@ -8,12 +8,15 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
+
+import java.io.Serializable;
+
 @NoArgsConstructor
-@XmlRootElement(name = "Organization")
+@XmlRootElement(name = "Organization",namespace = "https://localhost:9000/company/worker")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Data
 @AllArgsConstructor
-public class Organization {
+public class Organization implements Serializable {
     @XmlElement(name="id")
     public Integer id;
     @XmlElement(name="fullName")

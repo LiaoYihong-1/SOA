@@ -1,22 +1,24 @@
 package com.example.server2;
 
-import com.example.server2.model.Organization;
 import com.example.server2.model.Worker;
-import com.example.server2.model.WorkerInfo;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
-import jakarta.ws.rs.core.Response;
 import jakarta.xml.soap.SOAPException;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 @WebService
 public interface HrRes {
     @WebMethod
-    Worker test(@WebParam(name = "id") int id);
+    Worker test();
     @WebMethod
-    WorkerInfo fire(@WebParam(name = "worker") Worker worker) throws SOAPException;
+    String fire(@WebParam(name = "id") String id) throws SOAPException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException;
     @WebMethod
-    WorkerInfo move(@WebParam(name = "worker") Worker worker,
-                         @WebParam(name = "org-from") Organization orgFrom,
-                         @WebParam(name = "org-to") Organization orgTo) throws SOAPException;
+    public String move(@WebParam(name = "id") String workerIdStr,
+                       @WebParam(name = "id-from") String orgFromIdStr,
+                       @WebParam(name = "id-to") String orgToIdStr) throws SOAPException ;
 }

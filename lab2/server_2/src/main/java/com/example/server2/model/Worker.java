@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "WorkerFullInfo")
+@XmlRootElement(name = "WorkerFullInfo",namespace = "https://localhost:9000/company/worker")
 public class Worker {
     @XmlElement(name = "id")
     private Integer id;

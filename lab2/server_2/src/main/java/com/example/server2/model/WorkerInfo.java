@@ -12,10 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -64,7 +62,15 @@ public class WorkerInfo {
         w.setPosition(worker.getPosition());
         w.setEndDate(worker.getEndDate());
         w.setStartDate(worker.getStartDate());
-        w.setCreationDate(convertLocalTime(worker.getCreationDate()));
+
+        LocalDateTime moscowTime = worker.getCreationDate();
+        ZonedDateTime moscowZonedDateTime = moscowTime.atZone(ZoneId.of("Europe/Moscow"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String formattedDate = moscowZonedDateTime.format(formatter);
+
+        w.setCreationDate(ZonedDateTime.parse(formattedDate));
+
         return w;
     }
     public static ZonedDateTime convertLocalTime(LocalDateTime localDateTime){
