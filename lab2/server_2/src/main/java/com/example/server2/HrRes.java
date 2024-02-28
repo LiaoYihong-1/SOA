@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 @WebService
 public interface HrRes {
     @WebMethod
-    Worker test();
+    Worker test() throws SOAPException;
     @WebMethod
     String fire(@WebParam(name = "id") String id) throws SOAPException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException;
     @WebMethod

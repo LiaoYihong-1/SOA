@@ -58,18 +58,14 @@ public class HrResource implements HrRes {
 
 
     @Override
-    public Worker test() {
-        Worker w = new Worker();
-        w.setId(1);
-        w.setName("asdf");
-        w.setCoordinate(new Coordinate(2L, 2));
-        w.setCreationDate(LocalDateTime.now());
-        w.setSalary(9);
-        w.setPosition(Position.COOK);
-        w.setOrganization(new Organization(1, "Google", 654654L));
-        w.setStartDate(LocalDate.now());
-        w.setEndDate(LocalDate.now());
-        return w;
+    public Worker test() throws SOAPException {
+
+        SOAPFactory soapFactory = SOAPFactory.newInstance();
+        SOAPFault soapFault = soapFactory.createFault(
+                "400,Internal Server Error",
+                new QName("http://schemas.xmlsoap.org/soap/envelope/", "Client"));
+        throw new SOAPFaultException(soapFault);
+
     }
 
     @Override
@@ -128,15 +124,13 @@ public class HrResource implements HrRes {
         } catch (Exception ex) {
             SOAPFactory soapFactory = SOAPFactory.newInstance();
             SOAPFault soapFault = soapFactory.createFault(
-                    "500,Internal server error",
-                    new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server"));
+                    "400,Invalid request",
+                    new QName("http://schemas.xmlsoap.org/soap/envelope/", "Client"));
             throw new SOAPFaultException(soapFault);
         }
-        try {
-            int responseCode = connection.getResponseCode();
-            if (responseCode != 200)
-                throw new NotFoundException();
-        } catch (NotFoundException notFoundException) {
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode != 200) {
             SOAPFactory soapFactory = SOAPFactory.newInstance();
             SOAPFault soapFault = soapFactory.createFault(
                     "400,Invalid request",
@@ -221,9 +215,11 @@ public class HrResource implements HrRes {
                     "xmlns:m=\"https://localhost:9000/company/worker\">" +
                     "<soapenv:Header/>" +
                     "<soapenv:Body>" +
-                    "<m:FireWorkerResponse>" +
+                    "<m:PutWorker>" +
+                    "<m:Method>PUT</m:Method>" +
+                    "<m:URL>https://localhost:9000/company/workers/" + id_new + "</m:URL>" +
                     "<m:Payload>" + soapRequestXml + "</m:Payload>" +
-                    "</m:FireWorkerResponse>" +
+                    "</m:PutWorker>" +
                     "</soapenv:Body>" +
                     "</soapenv:Envelope>";
 
@@ -250,7 +246,7 @@ public class HrResource implements HrRes {
                     "</m:MoveWorkerResponse>" +
                     "</soapenv:Body>" +
                     "</soapenv:Envelope>";
-
+            System.out.println("wtf");
             return resp;
         } catch (NotFoundException notFoundException) {
             System.out.println("3");
@@ -336,6 +332,11 @@ public class HrResource implements HrRes {
             }
 
             int responseCode = connection.getResponseCode();
+            System.out.println(responseCode);
+            if (responseCode != 200) {
+                throw new NotFoundException();
+            }
+
             Worker workerFullInfo = null;
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 String line;
@@ -402,6 +403,9 @@ public class HrResource implements HrRes {
             }
 
             int responseCode2 = connection2.getResponseCode();
+            if (responseCode2 != 200) {
+                throw new NotFoundException();
+            }
             Organization organization = null;
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connection2.getInputStream()))) {
                 String line;
@@ -422,13 +426,7 @@ public class HrResource implements HrRes {
                     organization = (Organization) unmarshaller.unmarshal(org);
                 }
             } catch (JAXBException | SAXException | ParserConfigurationException e) {
-                e.printStackTrace();
-                System.out.println("2");
-                SOAPFactory soapFactory = SOAPFactory.newInstance();
-                SOAPFault soapFault = soapFactory.createFault(
-                        "400,Invalid request",
-                        new QName("http://schemas.xmlsoap.org/soap/envelope/", "Client"));
-                throw new SOAPFaultException(soapFault);
+                throw new NotFoundException();
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("5");
@@ -469,8 +467,10 @@ public class HrResource implements HrRes {
                         new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server"));
                 throw new SOAPFaultException(soapFault);
             }
-
-            int responseCode23 = connection23.getResponseCode();
+            int responseCode23 = connection2.getResponseCode();
+            if (responseCode23 != 200) {
+                throw new NotFoundException();
+            }
             Organization organization2 = null;
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connection23.getInputStream()))) {
                 String line;
@@ -491,13 +491,7 @@ public class HrResource implements HrRes {
                     organization2 = (Organization) unmarshaller.unmarshal(org);
                 }
             } catch (JAXBException | SAXException | ParserConfigurationException e) {
-                e.printStackTrace();
-                System.out.println("2");
-                SOAPFactory soapFactory = SOAPFactory.newInstance();
-                SOAPFault soapFault = soapFactory.createFault(
-                        "400,Invalid request",
-                        new QName("http://schemas.xmlsoap.org/soap/envelope/", "Client"));
-                throw new SOAPFaultException(soapFault);
+                throw new NotFoundException();
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("5");
